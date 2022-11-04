@@ -1,3 +1,4 @@
+
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
 <style>
 
@@ -934,10 +935,13 @@ p {
 
 </style>
 <body>
+ <form method="post" enctype="multipart/form-data" action="{% url 'register-doctor' %}">
+   {% csrf_token %}
   <div class="main-content">
     <div class="container mt-7">
       <!-- Table -->
 <!--      <h2 class="mb-5">Register a new doctor</h2>-->
+
       <div class="row">
         <div class="col-xl-8 m-auto order-xl-1">
           <div class="card bg-secondary shadow">
@@ -947,39 +951,43 @@ p {
                   <h3 class="mb-0">Register a new Doctor <h3>
                 </div>
                 <div class="col-4 text-right">
-                  <a href="#!" class="btn btn-sm btn-primary">back</a>
+<!--                  <a href="#!" >back</a>-->
+                  <a onclick="window.history.go(-1); return false;" class="btn btn-sm btn-primary" style="cursor: pointer; color:white;">Go Back</a>
                 </div>
               </div>
             </div>
             <div class="card-body">
-              <form>
+
                 <h6 class="heading-small text-muted mb-4">Doctor information</h6>
                 <div class="pl-lg-4">
                   <div class="row">
                     <div class="col-lg-6">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-username">Username</label>
-                        <input type="text" id="input-username" name="username" class="form-control form-control-alternative" placeholder="Username" value="lucky.jesse">
+                        <input type="text" id="input-username" name="username" class="form-control form-control-alternative" placeholder="Username" >
                       </div>
+                      <h5>{{ form.errors.username }}</h5>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="input-email">Email address</label>
                         <input type="email" id="input-email" name="email" class="form-control form-control-alternative" placeholder="jesse@example.com">
                       </div>
+                      <h5>{{ form.errors.email }}</h5>
                     </div>
+
                   </div>
                   <div class="row">
                     <div class="col-lg-6">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-first-name">First name</label>
-                        <input type="text" id="input-first-name" name="first_name" class="form-control form-control-alternative" placeholder="First name" value="Lucky">
+                        <input type="text" id="input-first-name" name="first_name" class="form-control form-control-alternative" placeholder="First name" >
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-last-name">Last name</label>
-                        <input type="text" id="input-last-name" name="last_name" class="form-control form-control-alternative" placeholder="Last name" value="Jesse">
+                        <input type="text" id="input-last-name" name="last_name" class="form-control form-control-alternative" placeholder="Last name" >
                       </div>
                     </div>
                   </div>
@@ -992,7 +1000,7 @@ p {
                     <div class="col-md-12">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-address">Profile Photo</label>
-                        <input id="input-address" class="form-control form-control-alternative" name="profile_photo" placeholder="profile photo" value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09" type="file">
+                        <input id="input-address" class="form-control form-control-alternative" multiple name="profile_photo" placeholder="profile photo" type="file">
                       </div>
                     </div>
                   </div>
@@ -1000,24 +1008,26 @@ p {
                     <div class="col-lg-4">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-city">Department</label>
-                        <input type="text" id="input-city" name="department" class="form-control form-control-alternative" placeholder="City" value="Gynecologist">
+                        <input type="text" id="input-city" name="department" class="form-control form-control-alternative" placeholder="Gynecologist" >
                       </div>
                     </div>
                     <div class="col-lg-4">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-country">Qualification</label>
-                        <input type="text" id="input-country" name="qualification" class="form-control form-control-alternative" placeholder="Country" value="MBBS/MD">
+                        <input type="text" id="input-country" name="qualification" class="form-control form-control-alternative" placeholder="MBBS/MD" >
                       </div>
                     </div>
 
-<!--                    <div class="col-lg-4">-->
-<!--                      <div class="form-group">-->
-<!--                        <label class="form-control-label" for="input-country">Postal code</label>-->
-<!--                        <input type="number" id="input-postal-code" class="form-control form-control-alternative" placeholder="Postal code">-->
-<!--                      </div>-->
-<!--                    </div>-->
+                    <div class="col-lg-4">
+                      <div class="form-group">
+                        <label class="form-control-label" for="input-country">Phone Number</label>
+                        <input type="number" id="input-postal-code" name="phone_number" class="form-control form-control-alternative" placeholder="+919846*****">
+                      </div>
+                      <h5>{{ form.errors.phone_number }}</h5>
+                    </div>
                   </div>
                 </div>
+
                 <div class="text-center">
                   <button type="submit" class="btn btn-lg btn-primary w-100 my-4 mb-2">Register
                   </button>
