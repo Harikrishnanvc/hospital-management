@@ -14,8 +14,12 @@ class UserDetails(models.Model):
         return self.first_name
 
 
+    class Meta:
+        verbose_name_plural = 'UserDetails'
+
+
 class LoginCredentials(AbstractUser):
-    user_id = models.ForeignKey(UserDetails, on_delete=models.CASCADE)
+    user_id= models.ForeignKey(UserDetails, on_delete=models.CASCADE, null=True)
     email = models.CharField(max_length=100, null=True, unique=True)
     phone_number = models.CharField(max_length=100, null=True, unique=True)
     username = models.CharField(max_length=100, unique=True)

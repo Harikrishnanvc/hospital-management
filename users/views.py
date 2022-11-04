@@ -61,3 +61,8 @@ class RegisterDoctorView(View):
                   profile_picture)
 
         return render(request, 'pages /add_doctor.html')
+
+
+
+
+

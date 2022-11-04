@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users'
+    'users',
+    'patient_app',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +84,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'hospital_management',
-        'USER': 'hari',
+        'USER': 'athiram',
         'PASSWORD': '123',
         'HOST': '127.0.0.1',
         'PORT': '5432',
