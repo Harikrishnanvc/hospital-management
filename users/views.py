@@ -4,12 +4,20 @@ from .models import LoginCredentials, UserDetails, Doctor, Patient
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth import logout
+from .forms import DoctorForm
+from django.contrib.auth.hashers import make_password
 
 
 # Create your views here.
 
 def dashboard(request):
-    return render(request, 'pages/dashboard.html')
+    doctor_details = UserDetails.objects.filter(user_role='doctor')
+    doctor_qualification = Doctor.objects.filter()
+    print(doctor_qualification)
+    context = {'doctor_details': doctor_details,
+               'doctor_qualification': doctor_qualification
+               }
+    return render(request, 'pages/dashboard.html', context)
 
 
 def sign_in(request):
@@ -38,26 +46,35 @@ class LoginView(View):
 
 
 def register_doctor_view(request):
-    return render(request, 'add_doctor.html')
+    form = DoctorForm()
+    return render(request, 'add_doctor.html', {'form': form})
 
 
 class RegisterDoctorView(View):
     def post(self, request):
-        if request.method=='POST':
-            username = request.POST['username']
-            email = request.POST['email']
-            first_name = request.POST['first_name']
-            last_name = request.POST['last_name']
-            department = request.POST['department']
-            qualification = request.POST['qualification']
-            profile_picture = request.POST.FILES['profile_picture']
+        if request.method == 'POST':
+            details = DoctorForm(request.POST)
+            if details.is_valid():
+                email = request.POST['email']
+                user_name = request.POST['username']
+                phone_number = request.POST['phone_number']
+                first_name = request.POST['first_name']
+                last_name = request.POST['last_name']
+                department = request.POST['department']
+                qualification = request.POST['qualification']
+                profile_picture = request.FILES.get('profile_photo')
+                random_password = LoginCredentials.objects.make_random_password()
+                password = make_password(random_password)
 
-            print(username,
-                  email,
-                  first_name,
-                  last_name,
-                  department,
-                  qualification,
-                  profile_picture)
+                LoginCredentials.objects.create(email=email, username=user_name, phone_number=phone_number,
+                                                password=password)
+                try:
+                    user = LoginCredentials.objects.get(email=email)
+                    UserDetails.objects.create(first_name=first_name, last_name=last_name,
+                                               profile_photo=profile_picture, user_details=user, user_role='doctor')
+                    Doctor.objects.create(department=department, qualification=qualification, user_details=user)
 
-        return render(request, 'pages /add_doctor.html')
+                except UserDetails.DoesNotExist:
+                    return render(request, 'add_doctor.html')
+
+            return render(request, 'pages/dashboard.html', {'form': details})
