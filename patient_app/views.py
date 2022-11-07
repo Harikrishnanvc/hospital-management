@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.views.generic import View
-
 # Create your views here.
 
 
@@ -17,22 +16,25 @@ class RegisterPatientView(View):
             last_name = request.POST['last_name']
             age = request.POST['age']
             email=request.POST['email']
+            phone_number = request.POST['phone_number']
             password=request.POST['passsword']
             # scan_report = request.POST['scan_report']
             # prescription = request.POST['prescription']
             # doctor_report = request.POST['doctor_report']
             # profile_picture = request.POST.FILES['profile_picture']
+
             
-            print(username,
-                  first_name,
-                  last_name,
-                  age,
-                  email,
-                  password)
-                #   scan_report,
-                #   prescription,
-                #   doctor_report,
-                #   profile_picture)
+            # print(username,
+            #       first_name,
+            #       last_name,
+            #       age,
+            #       email,
+            #       phone_number,
+            #       password)
+            #     #   scan_report,
+            #     #   prescription,
+            #     #   doctor_report,
+            #     #   profile_picture)
 
         return render(request, 'pages/add_patient.html')
 
