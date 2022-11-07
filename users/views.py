@@ -73,8 +73,8 @@ class RegisterDoctorView(View):
                     UserDetails.objects.create(first_name=first_name, last_name=last_name,
                                                profile_photo=profile_picture, user_details=user, user_role='doctor')
                     Doctor.objects.create(department=department, qualification=qualification, user_details=user)
-                    return render(request, 'pages /add_doctor.html')
+                    return redirect('dashboard')
                 except UserDetails.DoesNotExist:
                     return render(request, 'add_doctor.html')
 
-            return render(request, 'pages/dashboard.html', {'form': details})
+            return render(request, 'add_doctor.html', {'form': details})
