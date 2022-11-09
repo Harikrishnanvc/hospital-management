@@ -27,6 +27,9 @@ class UserDetails(models.Model):
     def __str__(self):
         return self.first_name
 
+    def get_full_name(self):
+        return ("%s %s" % (self.first_name, self.last_name)).strip()
+
 
 # Create your models here.
 
@@ -49,3 +52,15 @@ class Patient(models.Model):
 
     def __str__(self):
         return self.user_details.first_name
+
+
+class Leave(models.Model):
+    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
+    from_date = models.DateField(null=True)
+    to_date = models.DateField(null=True)
+    leave_type = models.CharField(max_length=50, null=True)
+    leave_reason = models.CharField(max_length=150, null=True)
+    leave_approval = models.BooleanField(null=True, default=False)
+
+    def __str__(self):
+        return self.user_details.username
