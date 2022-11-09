@@ -46,7 +46,6 @@ class LoginView(View):
             credentials = request.POST['credentials']
             password = request.POST['password']
             user = authenticate(username=credentials, password=password)
-
             if user is not None:
                 try:
                     user_role = UserDetails.objects.get(user_details__username=user).user_role
