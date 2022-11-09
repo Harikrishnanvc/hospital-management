@@ -46,7 +46,7 @@ class Doctor(models.Model):
 class Patient(models.Model):
     user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
     age = models.IntegerField()
-    token = models.CharField(max_length=150)
+    token = models.CharField(max_length=150, null=True)
     verify = models.BooleanField(null=True, blank=True,default=False)
     scanned_report = models.FileField(upload_to='scanned_report', null=True)
     doctor_report = models.FileField(upload_to='doctor_report',null=True)
