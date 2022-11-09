@@ -43,9 +43,12 @@ class Doctor(models.Model):
 class Patient(models.Model):
     user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
     age = models.IntegerField()
-    scanned_report = models.FileField(upload_to='scanned_report')
-    doctor_report = models.FileField(upload_to='doctor_report')
-    prescription = models.FileField(upload_to='prescription')
+    token = models.CharField(max_length=150)
+    verify = models.BooleanField(null=True, blank=True,default=False)
+    scanned_report = models.FileField(upload_to='scanned_report', null=True)
+    doctor_report = models.FileField(upload_to='doctor_report',null=True)
+    prescription = models.FileField(upload_to='prescription',null=True)
 
     def __str__(self):
-        return self.user_details.first_name
+        return self.user_details.username
+

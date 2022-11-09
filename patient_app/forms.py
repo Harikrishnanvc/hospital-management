@@ -1,6 +1,6 @@
-from django import forms
 from django.forms import ModelForm
-from users.models import LoginCredentials, UserDetails, Patient
+from django import forms
+from users.models import LoginCredentials,UserDetails,Patient
 from django.core.exceptions import ValidationError
 
 
@@ -12,6 +12,8 @@ class PatientForm(ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         db_email = LoginCredentials.objects.filter(email=email).exists()
+        #db_email = LoginCredentials.objects.get(email=email)
+        print(db_email)
         if db_email:
             raise ValidationError("email already exist")
         return self.cleaned_data
