@@ -4,13 +4,13 @@ from django.forms import ModelForm
 from .forms import PatientForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from users.models import LoginCredentials, UserDetails, Patient
+from users.models import LoginCredentials, UserDetails, Patient, BookAppointment
 from users.views import LoginView
-
+from django.db.models import Q
 from django.conf import settings
 from django.core.mail import send_mail
 import uuid
-
+from django.contrib import messages
 
 # Create your views here.
 
@@ -73,3 +73,55 @@ class RegisterPatientView(View):
                     return render(request, 'add_patient.html')
 
         return render(request, 'add_patient.html', {'form': details})
+
+
+class BookAppointmentView(View):
+
+    def get(self, request, id):
+        doctor_details = LoginCredentials.objects.filter(id=id)
+        context = {'doctor_details': doctor_details}
+        return render(request, 'book_appointment.html', context)
+
+    def post(self, request, id):
+        try:
+            user_details = LoginCredentials.objects.get(username=request.user)
+            print(user_details)
+            doctor_details = LoginCredentials.objects.get(id=id)
+            print(doctor_details)
+            booking_date = request.POST['booking_date']
+            booking_time = request.POST['booking_time']
+            appointment = BookAppointment.objects.filter(
+                Q(booking_date=booking_date) & Q(booking_time=booking_time)).last()
+
+            if appointment is None:
+                token = BookAppointment.objects.filter(booking_date=booking_date).values('booking_token').last()
+                if token is not None:
+                    if token['booking_token'] == 0:
+                        token = 1
+
+                        BookAppointment.objects.create(user_details=user_details, doctor_details=doctor_details,
+                                                       booking_date=booking_date, booking_time=booking_time,
+                                                       booking_token=token)
+                        return redirect('dashboard')
+                    if token['booking_token'] != 0:
+                        if token['booking_token'] < 1:
+                            token = token['booking_token'] + 1
+
+                            BookAppointment.objects.create(user_details=user_details, doctor_details=doctor_details,
+                                                           booking_date=booking_date, booking_time=booking_time,
+                                                           booking_token=token)
+                            return redirect('dashboard')
+                        else:
+                            messages.error(request, 'No slots available for selected day, please choose another day')
+                            return redirect('book-appointment-view', id=id)
+                if token is None:
+                    token = 1
+                    BookAppointment.objects.create(user_details=user_details, doctor_details=doctor_details,
+                                                   booking_date=booking_date, booking_time=booking_time,
+                                                   booking_token=token)
+                    return redirect('dashboard')
+            elif appointment is not None:
+                messages.error(request, 'Please select another time')
+                return redirect('book-appointment-view', id=id)
+        except LoginCredentials.DoesNotExist:
+            pass

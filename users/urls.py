@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from .views import (
     dashboard, sign_in, LoginView, sign_out, RegisterDoctorView, register_doctor_view,
     DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView

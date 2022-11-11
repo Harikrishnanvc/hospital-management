@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.views.generic.base import TemplateView
-from .models import LoginCredentials, UserDetails, Doctor, Leave
+from .models import LoginCredentials, UserDetails, Doctor, Leave, Patient
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -14,6 +14,10 @@ from django.contrib.auth.hashers import make_password
 def dashboard(request):
     doctor_details = UserDetails.objects.filter(user_role='doctor')
     doctor_qualification = Doctor.objects.filter()
+    doctor_login_details = LoginCredentials.objects.filter(userdetails__user_role='doctor')
+    patient_details = UserDetails.objects.filter(user_role='patient')
+    patient = Patient.objects.filter()
+    patient_login_details = LoginCredentials.objects.filter(userdetails__user_role='patient')
 
     try:
         user_role = UserDetails.objects.get(user_details__username=request.user)
@@ -21,7 +25,11 @@ def dashboard(request):
         user_role = None
     context = {'doctor_details': doctor_details,
                'doctor_qualification': doctor_qualification,
-               'user_role': user_role
+               'doctor_login_details':doctor_login_details,
+               'user_role': user_role,
+               'patient_details': patient_details,
+               'patient': patient,
+               'patient_login_details': patient_login_details,
                }
     return render(request, 'pages/dashboard.html', context)
 
@@ -141,3 +149,4 @@ class ApplyLeaveView(View):
 
 class ForgotPasswordView(TemplateView):
     template_name = 'pages/otp_validation.html'
+

@@ -47,10 +47,18 @@ class Patient(models.Model):
     user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
     age = models.IntegerField()
     token = models.CharField(max_length=150, null=True)
-    verify = models.BooleanField(null=True, blank=True,default=False)
+    verify = models.BooleanField(null=True, blank=True, default=False)
+
+    def __str__(self):
+        return self.user_details.username
+
+
+class Reports(models.Model):
+    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
     scanned_report = models.FileField(upload_to='scanned_report', null=True)
-    doctor_report = models.FileField(upload_to='doctor_report',null=True)
-    prescription = models.FileField(upload_to='prescription',null=True)
+    doctor_report = models.FileField(upload_to='doctor_report', null=True)
+    prescription = models.FileField(upload_to='prescription', null=True, )
+    prescription_note = models.CharField(max_length=150, null=True, blank=True)
 
     def __str__(self):
         return self.user_details.username
@@ -63,6 +71,18 @@ class Leave(models.Model):
     leave_type = models.CharField(max_length=50, null=True)
     leave_reason = models.CharField(max_length=150, null=True)
     leave_approval = models.BooleanField(null=True, default=False)
+
+    def __str__(self):
+        return self.user_details.username
+
+
+class BookAppointment(models.Model):
+    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
+    doctor_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True,
+                                       related_name='doctor_details')
+    booking_date = models.DateField(null=True)
+    booking_time = models.TimeField(null=True)
+    booking_token = models.IntegerField(default=0, null=True)
 
     def __str__(self):
         return self.user_details.username
