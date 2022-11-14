@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.views.generic.base import TemplateView
-from .models import LoginCredentials, UserDetails, Doctor, Leave
+from .models import LoginCredentials, UserDetails, Doctor, Leave, Patient
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -109,11 +109,13 @@ class DoctorProfileView(View):
         login_details = LoginCredentials.objects.filter(username=request.user)
         user_details = UserDetails.objects.filter(user_details__username=request.user)
         doctor_details = Doctor.objects.filter(user_details__username=request.user)
+        patient_details = Patient.objects.filter(user_details__username=request.user)
 
         context = {
             'user_details': user_details,
             'login_details': login_details,
-            'doctor_details': doctor_details
+            'doctor_details': doctor_details,
+            'patient_details':patient_details
         }
         return render(request, 'pages/profile.html', context)
 
