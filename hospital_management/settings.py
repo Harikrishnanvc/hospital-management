@@ -86,19 +86,19 @@ AUTH_USER_MODEL = 'users.LoginCredentials'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-<<<<<<< HEAD
+
         'NAME': env('POSTGRES_DB'),
         'USER': env('POSTGRES_USER'),
         'PASSWORD': env('POSTGRES_PASSWORD'),
         'HOST': env('POSTGRES_HOST'),
         'PORT': env('POSTGRES_PORT'),
-=======
+
         'NAME': 'hospital_management',
         'USER': 'hari',
         'PASSWORD': '123',
         'HOST': '127.0.0.1',
         'PORT': '5432',
->>>>>>> dev2
+
     }
 }
 
@@ -157,7 +157,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
-#email verification
+# email verification
 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True

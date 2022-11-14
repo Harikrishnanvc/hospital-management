@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 import uuid
 from django.contrib import messages
 
+
 # Create your views here.
 
 def send_email_after_registration(email, token):
@@ -125,4 +126,3 @@ class BookAppointmentView(View):
                 return redirect('book-appointment-view', id=id)
         except LoginCredentials.DoesNotExist:
             pass
-    
