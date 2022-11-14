@@ -125,3 +125,4 @@ class BookAppointmentView(View):
                 return redirect('book-appointment-view', id=id)
         except LoginCredentials.DoesNotExist:
             pass
+    
