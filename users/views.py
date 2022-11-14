@@ -25,7 +25,7 @@ def dashboard(request):
         user_role = None
     context = {'doctor_details': doctor_details,
                'doctor_qualification': doctor_qualification,
-               'doctor_login_details':doctor_login_details,
+               'doctor_login_details': doctor_login_details,
                'user_role': user_role,
                'patient_details': patient_details,
                'patient': patient,
@@ -66,8 +66,18 @@ class LoginView(View):
                         return redirect('register-doctor')
 
                     if user_role == 'patient':
-                        login(request, user)
-                        return redirect('dashboard')
+                        try:
+                            verified_user = Patient.objects.get(user_details__username=user).verify
+                            if verified_user is True:
+                                login(request, user)
+                                return redirect('dashboard')
+                            else:
+                                messages.success(request, f'E-mail is not verified')
+                                return redirect('sign-in')
+
+                        except Patient.DoesNotExist:
+                            messages.success(request, f'{user} does not exist')
+                            return redirect('sign-in')
 
                 except UserDetails.DoesNotExist:
                     return redirect('sign-in')
@@ -123,7 +133,7 @@ class DoctorProfileView(View):
             'user_details': user_details,
             'login_details': login_details,
             'doctor_details': doctor_details,
-            'patient_details':patient_details
+            'patient_details': patient_details
         }
         return render(request, 'pages/profile.html', context)
 
@@ -150,4 +160,3 @@ class ApplyLeaveView(View):
 
 class ForgotPasswordView(TemplateView):
     template_name = 'pages/otp_validation.html'
-
