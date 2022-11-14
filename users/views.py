@@ -54,7 +54,6 @@ class LoginView(View):
             credentials = request.POST['credentials']
             password = request.POST['password']
             user = authenticate(username=credentials, password=password)
-
             if user is not None:
                 try:
                     user_role = UserDetails.objects.get(user_details__username=user).user_role
@@ -118,11 +117,13 @@ class DoctorProfileView(View):
         login_details = LoginCredentials.objects.filter(username=request.user)
         user_details = UserDetails.objects.filter(user_details__username=request.user)
         doctor_details = Doctor.objects.filter(user_details__username=request.user)
+        patient_details = Patient.objects.filter(user_details__username=request.user)
 
         context = {
             'user_details': user_details,
             'login_details': login_details,
-            'doctor_details': doctor_details
+            'doctor_details': doctor_details,
+            'patient_details':patient_details
         }
         return render(request, 'pages/profile.html', context)
 

@@ -2,7 +2,7 @@ from django.forms import ModelForm
 from django import forms
 from users.models import LoginCredentials,UserDetails,Patient
 from django.core.exceptions import ValidationError
-
+from django.contrib.auth.forms import UserChangeForm
 
 class PatientForm(ModelForm):
     class Meta:
@@ -31,3 +31,25 @@ class PatientForm(ModelForm):
         if db_phone_number:
             raise ValidationError("phone number already exist")
         return self.cleaned_data
+
+class UpdateUserForm(forms.ModelForm):
+    # first_name = forms.CharField(max_length=150, required=True,
+    #                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # last_name = forms.CharField(max_length=150,required=True,widget=forms.TextInput(attrs={'class':'form-control'})
+    # )
+    # class Meta:
+        model = UserDetails
+        fields = ['first_name','last_name','profile_photo']
+
+class UpdateProfileForm(forms.ModelForm):
+    # username = forms.CharField(max_length=150,required=True,widget=forms.TextInput(attrs={'class':'form-control'}))
+    # email = forms.EmailField(max_length=150,required=True,widget=forms.EmailInput(attrs={'class':'form-control'}))
+    # phone_number = forms.CharField(max_length=150,required=True,widget=forms.TextInput(attrs={'class':'form-control'}))
+    class Meta:
+        model =LoginCredentials
+        fields = ['username','email','phone_number']
+
+class UpdatePatientForm(forms.ModelForm):
+    class Meta:
+        model = Patient
+        fields = ['age']
