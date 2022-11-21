@@ -95,13 +95,13 @@ class EditProfileView(View):
             except:
                 return render(request, 'editprofile.html')
 
-
 # class EditProfile(View):
 #     def get(self,request):
 #         login_details = LoginCredentials.objects.get(username=request.user)
 #         user_details = UserDetails.objects.get(user_details__username=request.user)
 #         patient_details = Patient.objects.get(user_details=request.user)
 #         return render(request, "editprofile.html", {'login_details':login_details,'user_details':user_details,'patient_details':patient_details})
+
 
 
 def register_patient_view(request):
@@ -201,39 +201,35 @@ class BookAppointmentView(View):
         except LoginCredentials.DoesNotExist:
             pass
 
-# def EditProfileView(request):
-
-#    user_details = UserDetails.objects.get(user_details__username=request.user)
-#    login_details = LoginCredentials.objects.get(username=request.user)
-#    if request.method == 'POST':
-#     form = EditProfileForm(request.Post,instance=user_details)
-#     form1 = EditProfileForm1(request.POST,instance=login_details)
-#     if form.is_valid() and form1.is_valid():
-#         form.save()
-#         form1.save()
-#     return render(request, 'profile/editprofile.html', {'form' : form, 'form1':form1})   
 
 
-# class EditProfileView(View):
-#     userform = EditProfileForm
-#     loginform = EditProfileForm1
 
-#     def post(self,request):
-#         data = request.POST or None
-#         userform = EditProfileForm(data,instance=request.user)
-#         loginform = EditProfileForm1(data,instance=request.user)
+class PatientUploadView(View):
 
-#         if userform.is_valid() and loginform.is_valid():
-#             userform.save()
-#             loginform.save()
-#             messages.success(request,"profile edited successfully")
+    def get(self, request):
+        # try:
+        login_details = LoginCredentials.objects.get(username=request.user)
+        user_details = UserDetails.objects.filter(user_details__username=login_details)
+        patient_details = Patient.objects.filter(user_details__username=login_details)
+        reports = Reports.objects.filter(user_details__username=login_details)
+        print(reports)
+        context = {
+            'login_details': login_details,
+            'user_details': user_details,
+            'patient_details': patient_details,
+            'reports': reports
+        }
 
-#             context = {
-#                 'userform':userform,
-#                 'loginform':loginform
-#                 }
-#             return redirect('profile-edit')
-#         return render(request,'editprofile.html',context)
+        return render(request, 'patient_profile_upload.html', context)
 
-#     def get(self,request):
-#         return self.post(request)
+    # except:
+    #     return redirect('dashboard')
+    def post(self, request):
+        # try:
+        patient = LoginCredentials.objects.get(username=request.user)
+        print(patient)
+        scanned_report = request.FILES.get('scanned_report')
+        Reports.objects.create(user_details=patient, scanned_report=scanned_report)
+        return redirect('profile-upload')
+
+
