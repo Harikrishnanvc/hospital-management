@@ -1,13 +1,14 @@
 import os
 from django.shortcuts import render, redirect
 from django.views.generic import View
+from django.http import FileResponse
 
 from django.core.files import File
 from users.models import LoginCredentials, UserDetails, Patient, ScannedReport, BookAppointment, PrescriptionFile
 from django.http import HttpResponse
 
 from django.conf import settings
-from easy_pdf.views import PDFTemplateView
+
 from .helpers import save_pdf
 
 from users.models import LoginCredentials, UserDetails, Patient
@@ -77,8 +78,7 @@ def open_file(request, prescription):
     return HttpResponse(content_type='application/pdf')
 
 
-from django.http import FileResponse
-import os
+
 
 
 class GeneratePdf(View):
