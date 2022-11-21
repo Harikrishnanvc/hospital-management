@@ -4,8 +4,19 @@ from django.http import FileResponse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
+from django.http import FileResponse
+
 
 from users.models import BookAppointment, PrescriptionFile
+
+from django.core.files import File
+from users.models import LoginCredentials, UserDetails, Patient, ScannedReport, BookAppointment, PrescriptionFile
+from django.http import HttpResponse
+
+from django.conf import settings
+
+from .helpers import save_pdf
+
 from users.models import LoginCredentials, UserDetails, Patient
 from .helpers import save_pdf
 
@@ -21,13 +32,12 @@ class PatientProfileView(View):
 
             reports = PrescriptionFile.objects.filter(user_details__username=login_details)
 
-            prescription = Reports.objects.filter(user_details__username=login_details)
 
             context = {
                 'login_details': login_details,
                 'user_details': user_details,
                 'patient_details': patient_details,
-                'reports': prescription
+                'reports': reports
             }
             return render(request, 'patient_profile.html', context)
 

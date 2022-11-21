@@ -10,7 +10,7 @@ from users.models import LoginCredentials, UserDetails, Patient, BookAppointment
 from users.views import LoginView
 from django.db.models import Q
 
-from users.models import LoginCredentials, UserDetails, Patient
+from users.models import LoginCredentials, UserDetails, Patient, ScannedReport
 from users.views import LoginView, DoctorProfileView
 
 from django.conf import settings
@@ -211,7 +211,7 @@ class PatientUploadView(View):
         login_details = LoginCredentials.objects.get(username=request.user)
         user_details = UserDetails.objects.filter(user_details__username=login_details)
         patient_details = Patient.objects.filter(user_details__username=login_details)
-        reports = Reports.objects.filter(user_details__username=login_details)
+        reports = ScannedReport.objects.filter(user_details__username=login_details)
         print(reports)
         context = {
             'login_details': login_details,
@@ -229,7 +229,7 @@ class PatientUploadView(View):
         patient = LoginCredentials.objects.get(username=request.user)
         print(patient)
         scanned_report = request.FILES.get('scanned_report')
-        Reports.objects.create(user_details=patient, scanned_report=scanned_report)
+        ScannedReport.objects.create(user_details=patient, scanned_report=scanned_report)
         return redirect('profile-upload')
 
 
