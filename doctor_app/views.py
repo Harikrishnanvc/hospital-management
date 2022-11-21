@@ -4,19 +4,8 @@ from django.http import FileResponse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
-from django.http import FileResponse
-
 
 from users.models import BookAppointment, PrescriptionFile
-
-from django.core.files import File
-from users.models import LoginCredentials, UserDetails, Patient, ScannedReport, BookAppointment, PrescriptionFile
-from django.http import HttpResponse
-
-from django.conf import settings
-
-from .helpers import save_pdf
-
 from users.models import LoginCredentials, UserDetails, Patient
 from .helpers import save_pdf
 
@@ -32,7 +21,6 @@ class PatientProfileView(View):
 
             reports = PrescriptionFile.objects.filter(user_details__username=login_details)
 
-
             context = {
                 'login_details': login_details,
                 'user_details': user_details,
@@ -44,18 +32,17 @@ class PatientProfileView(View):
         except LoginCredentials.DoesNotExist:
             return redirect('dashboard')
 
-
-def post(self, request, id):
-    try:
-        patient = LoginCredentials.objects.get(id=id)
-        patient_instance = Patient.objects.get(user_details=patient)
-        prescription = request.FILES.get('prescription')
-        prescription_note = request.POST['prescription_note']
-        PrescriptionFile.objects.create(user_details=patient, prescription=prescription,
-                                        prescription_note=prescription_note, patient=patient_instance)
-        return redirect('patient-profile', id=id)
-    except LoginCredentials.DoesNotExist:
-        return redirect('dashboard')
+    def post(self, request, id):
+        try:
+            patient = LoginCredentials.objects.get(id=id)
+            patient_instance = Patient.objects.get(user_details=patient)
+            prescription = request.FILES.get('prescription')
+            prescription_note = request.POST['prescription_note']
+            PrescriptionFile.objects.create(user_details=patient, prescription=prescription,
+                                            prescription_note=prescription_note, patient=patient_instance)
+            return redirect('patient-profile', id=id)
+        except LoginCredentials.DoesNotExist:
+            return redirect('dashboard')
 
 
 class BookingList(View):
