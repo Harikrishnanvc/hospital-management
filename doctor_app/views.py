@@ -1,17 +1,13 @@
 import os
+
+from django.http import FileResponse
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
 
-from django.core.files import File
-from users.models import LoginCredentials, UserDetails, Patient, ScannedReport, BookAppointment, PrescriptionFile
-from django.http import HttpResponse
-
-from django.conf import settings
-from easy_pdf.views import PDFTemplateView
-from .helpers import save_pdf
-
+from users.models import BookAppointment, PrescriptionFile
 from users.models import LoginCredentials, UserDetails, Patient
-from django.db.models import Q
+from .helpers import save_pdf
 
 
 # Create your views here.
@@ -75,10 +71,6 @@ def open_file(request, prescription):
         contents = f.read()
         print(contents)
     return HttpResponse(content_type='application/pdf')
-
-
-from django.http import FileResponse
-import os
 
 
 class GeneratePdf(View):
