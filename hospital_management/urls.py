@@ -10,8 +10,9 @@ urlpatterns = [
     path('doctor/', include('doctor_app.urls')),
     path('patient/', include('patient_app.urls')),
     path("", views.home, name="home"),
-    path("payment/", views.order_payment, name="payment"),
-    path("callback/", views.callback, name="callback"),
+    path("payment/<pk>", views.order_payment, name="payment"),
+    path("callback/<pk>", views.callback, name="callback"),
+    path("test/", views.test, name="test"),
 
 ]
 

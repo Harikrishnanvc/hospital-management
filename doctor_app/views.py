@@ -72,7 +72,6 @@ def open_file(request, prescription):
 
 class GeneratePdf(View):
     def get(self, request, id):
-        # return render(request, 'pages/booking.html')
         booking_details = BookAppointment.objects.filter(id=id)
 
         params = {
