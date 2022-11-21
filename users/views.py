@@ -1,12 +1,20 @@
+import base64
+from datetime import datetime
+
+import pyotp
+import requests
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout
+from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.views.generic.base import TemplateView
-from .models import LoginCredentials, UserDetails, Doctor, Leave, Patient
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from django.contrib.auth import logout
-from .forms import DoctorForm
-from django.contrib.auth.hashers import make_password
+
+from .forms import DoctorForm, PasswordForm
+from .models import LoginCredentials, UserDetails, Doctor, Leave, Patient, BookAppointment
 
 
 # Create your views here.
@@ -67,13 +75,13 @@ class LoginView(View):
 
                     if user_role == 'patient':
                         try:
-                            verified_user = Patient.objects.get(user_details__username=user).verify
-                            if verified_user is True:
-                                login(request, user)
-                                return redirect('dashboard')
-                            else:
-                                messages.success(request, f'E-mail is not verified')
-                                return redirect('sign-in')
+                            # verified_user = Patient.objects.get(user_details__username=user).verify
+                            # if verified_user is True:
+                            login(request, user)
+                            return redirect('dashboard')
+                        # else:
+                        #     messages.success(request, f'E-mail is not verified')
+                        #     return redirect('sign-in')
 
                         except Patient.DoesNotExist:
                             messages.success(request, f'{user} does not exist')
@@ -159,4 +167,92 @@ class ApplyLeaveView(View):
 
 
 class ForgotPasswordView(TemplateView):
-    template_name = 'pages/otp_validation.html'
+    template_name = 'pages/otp_generation.html'
+
+
+class GenerateKey:
+    @staticmethod
+    def return_value(phone):
+        return str(phone) + str(datetime.date(datetime.now())) + "Some Random Secret Key"
+
+
+EXPIRY_TIME = 120  # seconds
+
+
+class OtpValidation(View):
+    @staticmethod
+    def get(request):
+        phone = request.GET.get('phone')
+        try:
+            mobile = LoginCredentials.objects.get(Q(phone_number=phone) & ~Q(is_superuser=True))
+            mobile.save()
+            keygen = GenerateKey()
+            key = base64.b32encode(keygen.return_value(phone).encode())  # Key is generated
+            otp = pyotp.TOTP(key, interval=EXPIRY_TIME)  # TOTP Model for OTP is created
+            message = 'This is your OTP for password reset'
+            receiver = mobile.phone_number
+            send_sms(message, receiver)
+            print(otp.now())
+            return render(request, 'pages/otp_validation.html', {'mobile': phone})
+        except ObjectDoesNotExist:
+            messages.error(request, 'Phone number is not registered')
+            return render(request, 'pages/otp_generation.html')
+
+    @staticmethod
+    def post(request):
+        phone = request.POST.get('phone')
+        try:
+            mobile = LoginCredentials.objects.get(phone_number=phone)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Phone number is not registered')
+            return render(request, 'pages/otp_validation.html')
+        key_gen = 5
+        keygen = GenerateKey()
+        key = base64.b32encode(keygen.return_value(phone).encode())
+        otp = pyotp.TOTP(key, interval=EXPIRY_TIME)
+        if otp.verify(request.POST["OTP"]):
+            form = PasswordForm()
+
+            return render(request, 'pages/password_reset.html', {'phone_number': mobile.phone_number, 'form': form})
+        messages.error(request, '"OTP is wrong/expired"')
+        return render(request, 'pages/otp_generation.html')
+
+
+class PasswordReset(View):
+    def post(self, request):
+        details = PasswordForm(request.POST)
+        if details.is_valid():
+            phone_number = request.POST['phone_number']
+            password = request.POST['password']
+            LoginCredentials.objects.filter(phone_number=phone_number).update(password=make_password(password))
+            messages.success(request, 'Password updated')
+            return redirect('sign-in')
+        else:
+            return render(request, 'pages/password_reset.html', {'form': details})
+
+
+def send_sms(message, receiver):
+    print('here')
+    service_plan_id = "459e9394ded74c55bd829ec66eac14a0"
+    api_token = "fb11b617441e43e084a7106c1abe188e"
+    sinch_number = "+447520650906"
+    receiver = receiver
+    url = "https://us.sms.api.sinch.com/xms/v1/" + service_plan_id + "/batches"
+
+    payload = {
+        "from": sinch_number,
+        "to": [
+            receiver
+        ],
+        "body": "Hello how are you"
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + api_token
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+
+    data = response.json()
+    return redirect('dashboard')

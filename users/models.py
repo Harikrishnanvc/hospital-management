@@ -25,7 +25,7 @@ class UserDetails(models.Model):
     profile_photo = models.ImageField(upload_to='images', null=True)
 
     def __str__(self):
-        return self.first_name
+        return self.user_details.username
 
     def get_full_name(self):
         return ("%s %s" % (self.first_name, self.last_name)).strip()
@@ -40,7 +40,7 @@ class Doctor(models.Model):
     qualification = models.CharField(max_length=150)
 
     def __str__(self):
-        return self.department
+        return self.user_details.username
 
 
 class Patient(models.Model):
@@ -53,12 +53,21 @@ class Patient(models.Model):
         return self.user_details.username
 
 
-class Reports(models.Model):
+class PrescriptionFile(models.Model):
     user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
-    scanned_report = models.FileField(upload_to='scanned_report', null=True)
-    doctor_report = models.FileField(upload_to='doctor_report', null=True)
     prescription = models.FileField(upload_to='prescription', null=True, )
     prescription_note = models.CharField(max_length=150, null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.user_details.username
+
+
+class ScannedReport(models.Model):
+    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
+    scanned_report = models.FileField(upload_to='scanned_report', null=True)
+    prescription_note = models.CharField(max_length=150, null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.user_details.username
@@ -80,6 +89,7 @@ class BookAppointment(models.Model):
     user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
     doctor_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True,
                                        related_name='doctor_details')
+    booking_name = models.CharField(max_length=150, null=True)
     booking_date = models.DateField(null=True)
     booking_time = models.TimeField(null=True)
     booking_token = models.IntegerField(default=0, null=True)

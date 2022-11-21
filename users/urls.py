@@ -1,9 +1,8 @@
 from django.urls import path
 from .views import (
     dashboard, sign_in, LoginView, sign_out, RegisterDoctorView, register_doctor_view,
-    DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView
+    DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, OtpValidation, PasswordReset, send_sms
 )
-
 
 urlpatterns = [
     path('', dashboard, name='dashboard'),
@@ -17,5 +16,9 @@ urlpatterns = [
     path('apply-leave/', ApplyLeaveView.as_view(), name='apply-leave'),
     path('apply-leave/<pk>', ApplyLeaveView.as_view(), name='send-leave-request'),
     path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
+    path('otp-generation/', OtpValidation.as_view(), name='otp-generation'),
+    path('otp-validation/', OtpValidation.as_view(), name='otp-validation'),
+    path('password-reset/', PasswordReset.as_view(), name='password-reset'),
+    path('send-sms/', send_sms, name='send-sms'),
 
 ]

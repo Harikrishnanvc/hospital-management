@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'patient_app',
-    'doctor_app'
+    'doctor_app',
+    'easy_pdf',
+    'paymentapp'
 ]
 
 MIDDLEWARE = [
@@ -158,3 +160,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'athiramuralidharan99@gmail.com'
 EMAIL_HOST_PASSWORD = 'zziayuewgkaqaewg'
 EMAIL_PORT = 587
+
+#   payment integration
+RAZORPAY_KEY_ID = 'rzp_test_RkdULXUF2Pz4eh'
+RAZORPAY_KEY_SECRET = 'RgsLBoDV1lR0SwUaJxy7cvc3'

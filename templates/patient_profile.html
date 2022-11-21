@@ -221,7 +221,7 @@
                                         <div class="avatar avatar-sm bg-gradient-secondary  me-3  my-auto">
                                             <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1"
                                                  xmlns="http://www.w3.org/2000/svg"
-                                                 xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            >
                                                 <title>credit-card</title>
                                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                                     <g transform="translate(-2169.000000, -745.000000)" fill="#FFFFFF"
@@ -400,9 +400,10 @@
                                             <div class="form__group" style="margin-bottom:10px;">
 
                                                 <input type="text"
-                                                       style="width:250px; height:40px; border:none;" name="prescription_note"
+                                                       style="width:250px; height:40px; border:none;"
+                                                       name="prescription_note"
                                                        class="form__input" id="name" placeholder="Prescription Note"
-                                                       />
+                                                />
 
                                             </div>
                                             <input type="file" name="prescription" class="custom-file-input"
@@ -446,8 +447,9 @@
                                     </a>
 
                                     <div class="d-flex align-items-center justify-content-between">
-                                        <button type="button" class="btn btn-outline-primary btn-sm mb-0">View Project
-                                        </button>
+                                        <a type="button" class="btn btn-outline-primary btn-sm mb-0"
+                                           href="{% url 'open-file' report.id %}">Open File
+                                        </a>
                                         <div class="avatar-group mt-2">
 
                                         </div>
@@ -569,6 +571,7 @@
       }
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
+
 
 
 

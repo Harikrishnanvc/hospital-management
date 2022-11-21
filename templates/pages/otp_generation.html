@@ -1,142 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>otp-generation</title>
-</head>
-
-<body>
 <style>
-
-  body{
-	background-color: #221e1e;
+body{
+	background-color: #181e2d;
 }
 
-.card0{
-	border-radius: 30px;
-}
-.card{
-	/*border-radius: 0;*/
-	border: none;
-	position: relative;
-}
-.card1{
-	width: 50%;
-	height: 680px;
-}
-.card2{
-	width: 50%;
-	height: 680px;
-	background-color: #033b76;
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
-	border-top-right-radius: 30px;
-	border-bottom-right-radius: 30px;
-}
+.bbb-wrapper{
 
-.mheading{
-	color: #033b76;
-	font-size: 30px;
-	font-family: arial;
-	padding: 10px 0 40px 0;
-}
-h2{
-	color: #033b76;
-}
-.abc{
-	color: #acb3ba!important;
-	font-weight: bold;
-}
-#image1{
-	height: 75px;
-	width: 60px;
-}
-.form-control{
-	border: 1px solid grey;
-}
-
-.form-control:focus {
-    color: #495057;
-
-    outline: 0;
-    box-shadow: 0 0 0 0 rgba(0, 123, 255, .25) !important
-}
-
-.text-muted p{
-	font-size: 10px;
-	color: #dae0e5;
-}
-.text-muted a{
-	color: #adb5bd;
-	text-decoration: underline;
-}
-.mrow{
-	padding-left: 20%;
-}
-.krow{
-	padding-top: 2px;
-}
-#image2{
-	width: 40%;
-	height: 200px;
-	margin: auto;
-}
-.form-group{
-	position: relative;
-	margin-bottom: 1.5rem;
-}
-.btn-sm{
-	width: 87%;
-	height: 35px;
-	text-align: center;
-	font-size: 12px;
-	border-radius: 20px;
-	border: 1px solid #033b76;
-	background-color: #033b76;
-}
-@media screen and (max-width: 1200px){
-	.card1{
-		width: 100%;
-		padding: 10px 30px;
-	}
-.card2{
-	width: 100%;
-	border-top-left-radius: 30px;
-	border-top-right-radius: 30px;
-	border-bottom-right-radius: 0px;
+	    margin-top: 200px;
 
 }
+.fl-wrap {
+    float: left;
+    width: 100%;
+    position: relative;
 }
-@media screen and (max-width: 768px){
-	.container{
-		padding: 10px!important;
-	}
-.card2{
-	height: 400px;
-	border-top-left-radius: 30px;
-	border-top-right-radius: 30px;
-	border-bottom-right-radius: 0px;
+
+.bbb-wrapper .subcribe-form p {
+    color: #fff;
+    font-size: 14px;
 }
+
+.bbb-wrapper .subcribe-form form {
+    max-width: 450px;
+    margin: 15px auto;
+    position: relative;
 }
+
+.bbb-wrapper .subcribe-form #subscribe input {
+    width: 100%;
+    height: 48px;
+    background: #fff;
+    border: none;
+    outline: none;
+    border-radius: 1px;
+    padding: 0 30px;
+    box-shadow: 0px 0px 0px 7px rgba(255,255,255,0.2);
+}
+
+.bbb-wrapper .subcribe-form #subscribe #subscribe-button {
+    height: 38px;
+    padding: 0 30px;
+    border-radius: 3px;
+    border: none;
+    position: absolute;
+    right: 6px;
+    top: 6px;
+        font-size: 11px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.subscribe-message {
+    color: #fff;
+    float: left;
+    margin-top: 10px;
+    text-align: left;
+    font-weight: 500;
+    line-height: 19px;
+}
+
+.color-bg{
+	    background: #4DB7FE;
+}
+
+#subscribe-button:hover{
+    background: #2C3B5A;
+    color: #fff;
+}
+
+
+
+
 </style>
-<div class="container px-4 py-5">
-	<div class="card card0">
-		<div class="d-flex flex-lg-row flex-column-reverse">
-			<div class="card1">
-					<div class="row justify-content-center my-auto">
-						<div class="col-lg-8 my-5">
-						<p class="my-2
-						 mheading"><img src="https://img.icons8.com/wired/64/000000/light.png" id="image1"/>Rivalues</p>
-						<h2 class="mb-3">Join Rivalues</h2><small class="text-muted abc">Enter your email to get weeklyish updates</small>
-						<div class="form-group mt-4"><input type="email" class="form-control" id="mail" placeholder="email address"></div>
-						<div class="row justify-content-center krow"><button type="button" class="btn btn-primary btn-sm btn-block">SUBMIT</button></div>
-					</div>
-				</div>
-				<div class="row mrow"><small class="text-muted"><p>By submitting you will agree to our<a href="#"> Terms of Services</a> and<br> have read our <a href="#">Privacy Policy</a> Right?</p></small></div>
-			</div>
-			<div class="card card2 "><img src="https://img.icons8.com/bubbles/100/000000/short-hair-idea.png" id="image2"/></div>
-		</div>
-	</div>
+<body>
+
+<div class="bbb-wrapper fl-wrap" style="margin-top:350px;">
+    <div class="subcribe-form fl-wrap">
+        <h3 style="color:white; margin-left:788px;">Forgot Password?</h3>
+        <form id="subscribe" novalidate="true" method="get" action="{% url 'otp-generation' %}">
+            <input class="enteremail" name="phone" id="subscribe-email"
+                   placeholder="enter your registered phone number"
+                   spellcheck="false" type="number">
+            <button type="submit" id="subscribe-button" class="subscribe-button color-bg"><i class="fa fa-rss"></i> Get
+                OTP
+            </button>
+            <label for="subscribe-email" class="subscribe-message"></label>
+            {% if messages %}
+            {% for msg in messages %}
+            <h3 style="color:red;">{{msg}}</h3>
+
+            {% endfor %}
+            {% endif %}
+        </form>
+    </div>
 </div>
+</form>
 </body>
-</html>
+<script>
+let digitValidate = function(ele){
+  console.log(ele.value);
+  ele.value = ele.value.replace(/[^0-9]/g,'');
+}
+
+let tabChange = function(val){
+    let ele = document.querySelectorAll('input');
+    if(ele[val-1].value != ''){
+      ele[val].focus()
+    }else if(ele[val-1].value == ''){
+      ele[val-2].focus()
+    }
+ }
+
+
+
+
+
+</script>

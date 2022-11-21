@@ -30,3 +30,21 @@ class DoctorForm(ModelForm):
         if db_phone_number:
             raise ValidationError("phone number already exist")
         return self.cleaned_data
+
+
+class PasswordForm(ModelForm):
+    confirm_password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta:
+        model = LoginCredentials
+        fields = ['password', 'confirm_password']
+
+    def clean(self):
+        cleaned_data = super(PasswordForm, self).clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password != confirm_password:
+            raise forms.ValidationError(
+                "password not matching"
+            )

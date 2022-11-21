@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserChangeForm
-from .forms import PatientForm,UpdateUserForm,UpdateProfileForm,UpdatePatientForm
+from .forms import PatientForm, UpdateUserForm, UpdateProfileForm, UpdatePatientForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 
@@ -11,7 +11,7 @@ from users.views import LoginView
 from django.db.models import Q
 
 from users.models import LoginCredentials, UserDetails, Patient
-from users.views import LoginView,DoctorProfileView
+from users.views import LoginView, DoctorProfileView
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -39,32 +39,32 @@ def account_verify(request, token):
 
 class EditProfileView(View):
 
-    def get(self,request):
-        
-            login_details = LoginCredentials.objects.get(username=request.user)
-            user_details = UserDetails.objects.get(user_details__username=request.user)
-            patient_details = Patient.objects.get(user_details=request.user)
-            context = {
-                'login_details':login_details,
-                'user_details':user_details,
-                'patient_details':patient_details
-            }
-            return render(request,'editprofile.html', context)
-            # return render(request, "editprofile.html", {'login_details':login_details,'user_details':user_details,'patient_details':patient_details})
-        
-    def post(self,request):
+    def get(self, request):
+
+        login_details = LoginCredentials.objects.get(username=request.user)
+        user_details = UserDetails.objects.get(user_details__username=request.user)
+        patient_details = Patient.objects.get(user_details=request.user)
+        context = {
+            'login_details': login_details,
+            'user_details': user_details,
+            'patient_details': patient_details
+        }
+        return render(request, 'editprofile.html', context)
+        # return render(request, "editprofile.html", {'login_details':login_details,'user_details':user_details,'patient_details':patient_details})
+
+    def post(self, request):
         # login_details = UpdateProfileForm()
         # user_details = UpdateUserForm(request.POST,request.FILES)
         # patient_details = UpdatePatientForm()
-      
+
         if request.method == 'POST':
             try:
                 login_details = LoginCredentials.objects.get(username=request.user)
-      
+
                 user_details = UserDetails.objects.get(user_details__username=request.user)
-           
+
                 patient_details = Patient.objects.get(user_details=request.user)
-                
+
                 login_details.username = request.POST['username']
                 login_details.email = request.POST['email']
                 login_details.phone_number = request.POST['phone_number']
@@ -72,16 +72,15 @@ class EditProfileView(View):
                 user_details.last_name = request.POST['last_name']
                 profile_photo = request.FILES.get('profile_photo')
                 patient_details.age = request.POST['age']
-            
+
                 if profile_photo is None:
-                                     
-                    
+
                     user_details.profile_photo = user_details.profile_photo
                     login_details.save()
                     user_details.save()
                     patient_details.save()
 
-                    messages.success(request,"updated successfully")
+                    messages.success(request, "updated successfully")
                     return redirect('doctor-profile')
                 elif profile_photo is not None:
                     user_details.profile_photo = profile_photo
@@ -89,12 +88,12 @@ class EditProfileView(View):
                     user_details.save()
                     patient_details.save()
 
-                    messages.success(request,"updated successfully")
+                    messages.success(request, "updated successfully")
                     return redirect('doctor-profile')
                 else:
-                     messages.success(request,"error")
+                    messages.success(request, "error")
             except:
-                return render(request,'editprofile.html')
+                return render(request, 'editprofile.html')
 
 
 # class EditProfile(View):
@@ -103,9 +102,6 @@ class EditProfileView(View):
 #         user_details = UserDetails.objects.get(user_details__username=request.user)
 #         patient_details = Patient.objects.get(user_details=request.user)
 #         return render(request, "editprofile.html", {'login_details':login_details,'user_details':user_details,'patient_details':patient_details})
-
- 
-
 
 
 def register_patient_view(request):
@@ -142,14 +138,13 @@ class RegisterPatientView(View):
                     Patient.objects.create(age=age, token=token, user_details=user)
                     send_email_after_registration(user.email, token)
                     messages.success(request,
-                                     "your account created successfullu to verify your account check your email..")
+                                     "your account created successfully to verify your account check your email..")
 
                     return redirect('sign-in')
                 except UserDetails.DoesNotExist:
                     return render(request, 'add_patient.html')
 
         return render(request, 'add_patient.html', {'form': details})
-
 
 
 class BookAppointmentView(View):
@@ -164,38 +159,41 @@ class BookAppointmentView(View):
             user_details = LoginCredentials.objects.get(username=request.user)
             print(user_details)
             doctor_details = LoginCredentials.objects.get(id=id)
-            print(doctor_details)
+            patient_details = UserDetails.objects.get(user_details__username=user_details).get_full_name()
+            print(patient_details)
             booking_date = request.POST['booking_date']
             booking_time = request.POST['booking_time']
             appointment = BookAppointment.objects.filter(
-                Q(booking_date=booking_date) & Q(booking_time=booking_time)).last()
+                Q(booking_date=booking_date) & Q(booking_time=booking_time) &
+                Q(doctor_details=doctor_details)).last()
 
             if appointment is None:
-                token = BookAppointment.objects.filter(booking_date=booking_date).values('booking_token').last()
+                token = BookAppointment.objects.filter(Q(booking_date=booking_date) &
+                                                       Q(doctor_details=doctor_details)).values('booking_token').last()
                 if token is not None:
                     if token['booking_token'] == 0:
                         token = 1
 
                         BookAppointment.objects.create(user_details=user_details, doctor_details=doctor_details,
                                                        booking_date=booking_date, booking_time=booking_time,
-                                                       booking_token=token)
+                                                       booking_token=token, booking_name=patient_details)
                         return redirect('dashboard')
                     if token['booking_token'] != 0:
-                        if token['booking_token'] < 1:
+                        if token['booking_token'] < 20:
                             token = token['booking_token'] + 1
 
                             BookAppointment.objects.create(user_details=user_details, doctor_details=doctor_details,
                                                            booking_date=booking_date, booking_time=booking_time,
-                                                           booking_token=token)
+                                                           booking_token=token, booking_name=patient_details)
                             return redirect('dashboard')
                         else:
                             messages.error(request, 'No slots available for selected day, please choose another day')
                             return redirect('book-appointment-view', id=id)
-                if token is None:
+                else:
                     token = 1
                     BookAppointment.objects.create(user_details=user_details, doctor_details=doctor_details,
                                                    booking_date=booking_date, booking_time=booking_time,
-                                                   booking_token=token)
+                                                   booking_token=token, booking_name=patient_details)
                     return redirect('dashboard')
             elif appointment is not None:
                 messages.error(request, 'Please select another time')
@@ -204,7 +202,7 @@ class BookAppointmentView(View):
             pass
 
 # def EditProfileView(request):
-    
+
 #    user_details = UserDetails.objects.get(user_details__username=request.user)
 #    login_details = LoginCredentials.objects.get(username=request.user)
 #    if request.method == 'POST':
@@ -229,7 +227,7 @@ class BookAppointmentView(View):
 #             userform.save()
 #             loginform.save()
 #             messages.success(request,"profile edited successfully")
-            
+
 #             context = {
 #                 'userform':userform,
 #                 'loginform':loginform
@@ -239,6 +237,3 @@ class BookAppointmentView(View):
 
 #     def get(self,request):
 #         return self.post(request)
-
-
-
