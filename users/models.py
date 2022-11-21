@@ -93,6 +93,7 @@ class BookAppointment(models.Model):
     booking_date = models.DateField(null=True)
     booking_time = models.TimeField(null=True)
     booking_token = models.IntegerField(default=0, null=True)
+    booking_status = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user_details.username

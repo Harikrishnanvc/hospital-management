@@ -112,6 +112,7 @@
 
 <!--                    Doctor-->
                         {% if doctor.user_role == 'doctor' %}
+
                     <table id="fresh-table" class="table">
                         <thead>
                         <!--                        <th data-field="id">ID</th>-->
@@ -124,6 +125,7 @@
                         </thead>
                         <tbody>
                         {% for booking in patient_booking_list %}
+                        {% if booking.booking_status == True %}
                         <tr>
                             <td>{{ booking.booking_name }}</td>
                             <td>{{ booking.booking_date }}</td>
@@ -131,6 +133,7 @@
                             <td>{{ booking.booking_token }}</td>
                             <td></td>
                         </tr>
+                        {% endif %}
                         {% endfor %}
                         {% endif %}
 
@@ -140,23 +143,38 @@
                     <table id="fresh-table" class="table">
                         <thead>
                         <!--                        <th data-field="id">ID</th>-->
-                        <th data-field="name" data-sortable="true">Name</th>
+
                         <th data-field="salary" data-sortable="true">Date</th>
                         <th data-field="country" data-sortable="true">Time</th>
                         <th data-field="city">Token No.</th>
+                        <th data-field="name" data-sortable="true">Status</th>
                         <th data-field="actions"  >Actions
                         </th>
                         </thead>
                         <tbody>
                         {% for booking in booking_details %}
+                        {% if booking.booking_status == True %}
                         <tr>
-                            <td>{{ booking.booking_name }}</td>
+
                             <td>{{ booking.booking_date }}</td>
                             <td>{{ booking.booking_time }}</td>
                             <td>{{ booking.booking_token }}</td>
+                            <td>Success</td>
                             <td><a class="btn" href="{% url 'booking-id' booking.id%}">Print</a></td>
                         </tr>
+                        {% endif %}
+                        {% if booking.booking_status == False %}
+                        <tr>
+
+                            <td>{{ booking.booking_date }}</td>
+                            <td>{{ booking.booking_time }}</td>
+                            <td>Token not generated</td>
+                            <td>Failed</td>
+                            <td><a class="btn" >Print</a></td>
+                        </tr>
+                        {% endif %}
                         {% endfor %}
+
                         {% endif %}
                         {% endfor %}
 

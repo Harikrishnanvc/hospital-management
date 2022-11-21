@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Order
 from django.views.decorators.csrf import csrf_exempt
 import razorpay
@@ -6,6 +6,7 @@ from django.conf import settings
 from .constants import PaymentStatus
 from django.views.decorators.csrf import csrf_exempt
 import json
+from users.models import LoginCredentials, BookAppointment
 
 
 # Create your views here.
@@ -15,38 +16,40 @@ def home(request):
     return render(request, "payment/index.html")
 
 
-def order_payment(request):
-    if request.method == "POST":
-        name = request.POST.get("name")
-        amount = request.POST.get("amount")
-        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-        razorpay_order = client.order.create(
-            {"amount": int(amount) * 100, "currency": "INR", "payment_capture": "1"}
-        )
-        order = Order.objects.create(
-            name=name, amount=amount, provider_order_id=razorpay_order["id"]
-        )
-        order.save()
-        return render(
-            request,
-            "payment/payment.html",
-            {
-                "callback_url": "http://" + "127.0.0.1:8000" + "/callback/",
-                "razorpay_key": settings.RAZORPAY_KEY_ID,
-                "order": order,
-            },
-        )
+def order_payment(request, pk):
+    if request.method == "GET":
+        try:
+            booking_name = LoginCredentials.objects.get(username=request.user)
+            amount = 150
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+            razorpay_order = client.order.create(
+                {"amount": amount * 100, "currency": "INR", "payment_capture": "1"}
+            )
+            order = Order.objects.create(
+                booking_name=booking_name, amount=amount, provider_order_id=razorpay_order["id"]
+            )
+            return render(
+                request,
+                "payment/payment.html",
+                {
+                    "callback_url": "http://" + "127.0.0.1:8000" + f"/callback/{pk}",
+                    "razorpay_key": settings.RAZORPAY_KEY_ID,
+                    "order": order,
+                },
+            )
+        except LoginCredentials.DoesNotExist:
+            return redirect('dashboard')
+
     return render(request, "payment/payment.html")
 
 
 @csrf_exempt
-def callback(request):
+def callback(request, pk):
     def verify_signature(response_data):
         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
         return client.utility.verify_payment_signature(response_data)
 
-    print(request.POST)
-    print("razorpay_signature" in request.POST)
+
     if "razorpay_signature" in request.POST:
         payment_id = request.POST.get("razorpay_payment_id", "")
         provider_order_id = request.POST.get("razorpay_order_id", "")
@@ -56,6 +59,8 @@ def callback(request):
         order.signature_id = signature_id
         order.status = PaymentStatus.SUCCESS
         order.save()
+        BookAppointment.objects.filter(id=pk).update(booking_status=True)
+
         return render(request, "payment/callback.html", context={"status": order.status})
         # if not verify_signature(request.POST):
         #     order.status = PaymentStatus.SUCCESS
@@ -75,3 +80,7 @@ def callback(request):
         order.status = PaymentStatus.FAILURE
         order.save()
         return render(request, "payment/callback.html", context={"status": order.status})
+
+
+def test(request):
+    return render(request, 'payment/callback.html')

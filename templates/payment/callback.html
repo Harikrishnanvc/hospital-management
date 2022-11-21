@@ -1,6 +1,19 @@
 {% extends 'payment/base.html' %}
 {% block content %}
+
+<style type="text/css">
+ .topcorner{
+   position:absolute;
+   top:80px;
+   right:150px;
+
+  }
+</style>
 <div class="text-center" style="margin-top:20%">
+    <div class="topcorner">
+            <a type="button" href="{% url 'dashboard' %}" class="btn btn-danger">Dashboard</a>
+
+    </div>
     {% if status == "Success" %}
     <h2>THANKS YOUR PAYMENT HAS BEEN RECEIVED</h2>
     {% else %}
