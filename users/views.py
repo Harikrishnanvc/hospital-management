@@ -67,13 +67,13 @@ class LoginView(View):
 
                     if user_role == 'patient':
                         try:
-                            verified_user = Patient.objects.get(user_details__username=user).verify
-                            if verified_user is True:
+                        #     verified_user = Patient.objects.get(user_details__username=user).verify
+                        #     if verified_user is True:
                                 login(request, user)
                                 return redirect('dashboard')
-                            else:
-                                messages.success(request, f'E-mail is not verified')
-                                return redirect('sign-in')
+                            # else:
+                            #     messages.success(request, f'E-mail is not verified')
+                            #     return redirect('sign-in')
 
                         except Patient.DoesNotExist:
                             messages.success(request, f'{user} does not exist')
@@ -160,3 +160,64 @@ class ApplyLeaveView(View):
 
 class ForgotPasswordView(TemplateView):
     template_name = 'pages/otp_validation.html'
+
+
+
+class Edit_Doctor_Profile_View(View):
+
+    def get(self,request):
+        
+            login_details = LoginCredentials.objects.get(username=request.user)
+            user_details = UserDetails.objects.get(user_details__username=request.user)
+            doctor_details = Doctor.objects.get(user_details=request.user)
+            context = {
+                'login_details': login_details,
+                'user_details': user_details,
+                'doctor_details': doctor_details
+            }
+            return render(request,'editdoctorprofile.html', context)
+            # return render(request, "editprofile.html", {'login_details':login_details,'user_details':user_details,'patient_details':patient_details})
+        
+    def post(self,request):
+        # login_details = UpdateProfileForm()
+        # user_details = UpdateUserForm(request.POST,request.FILES)
+        # patient_details = UpdatePatientForm()
+      
+        if request.method == 'POST':
+            try:
+                login_details = LoginCredentials.objects.get(username=request.user)
+      
+                user_details = UserDetails.objects.get(user_details__username=request.user)
+           
+                doctor_details = Doctor.objects.get(user_details=request.user)
+                
+                login_details.username = request.POST['username']
+                login_details.email = request.POST['email']
+                login_details.phone_number = request.POST['phone_number']
+                user_details.first_name = request.POST['first_name']
+                user_details.last_name = request.POST['last_name']
+                profile_photo = request.FILES.get('profile_photo')
+                doctor_details.qualification = request.POST['qualification']
+            
+                if profile_photo is None:
+                                     
+                    
+                    user_details.profile_photo = user_details.profile_photo
+                    login_details.save()
+                    user_details.save()
+                    doctor_details.save()
+
+                    messages.success(request,"updated successfully")
+                    return redirect('doctor-profile')
+                elif profile_photo is not None:
+                    user_details.profile_photo = profile_photo
+                    login_details.save()
+                    user_details.save()
+                    doctor_details.save()
+
+                    messages.success(request,"updated successfully")
+                    return redirect('doctor-profile')
+                else:
+                     messages.success(request,"error")
+            except:
+                return render(request,'editdoctorprofile.html')

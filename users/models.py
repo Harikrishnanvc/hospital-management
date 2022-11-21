@@ -53,6 +53,26 @@ class Patient(models.Model):
         return self.user_details.username
 
 
+class PrescriptionFile(models.Model):
+    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
+    prescription = models.FileField(upload_to='prescription', null=True, )
+    prescription_note = models.CharField(max_length=150, null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.user_details.username
+
+
+class ScannedReport(models.Model):
+    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
+    scanned_report = models.FileField(upload_to='scanned_report', null=True)
+    prescription_note = models.CharField(max_length=150, null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.user_details.username
+
+
 class Reports(models.Model):
     user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
     scanned_report = models.FileField(upload_to='scanned_report', null=True)

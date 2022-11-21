@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from users.models import LoginCredentials, UserDetails, Patient, Reports
-
+from django.db.models import Q
 
 # Create your views here.
 class PatientProfileView(View):
@@ -11,12 +11,12 @@ class PatientProfileView(View):
             login_details = LoginCredentials.objects.get(id=id)
             user_details = UserDetails.objects.filter(user_details__username=login_details)
             patient_details = Patient.objects.filter(user_details__username=login_details)
-            reports = Reports.objects.filter(user_details__username=login_details)
+            prescription = Reports.objects.filter(user_details__username=login_details)
             context = {
                 'login_details': login_details,
                 'user_details': user_details,
                 'patient_details': patient_details,
-                'reports': reports
+                'reports': prescription
             }
             return render(request, 'patient_profile.html', context)
 

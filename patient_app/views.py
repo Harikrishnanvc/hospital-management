@@ -6,7 +6,7 @@ from .forms import PatientForm,UpdateUserForm,UpdateProfileForm,UpdatePatientFor
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 
-from users.models import LoginCredentials, UserDetails, Patient, BookAppointment
+from users.models import LoginCredentials, UserDetails, Patient, BookAppointment, Reports
 from users.views import LoginView
 from django.db.models import Q
 
@@ -97,15 +97,6 @@ class EditProfileView(View):
                 return render(request,'editprofile.html')
 
 
-# class EditProfile(View):
-#     def get(self,request):
-#         login_details = LoginCredentials.objects.get(username=request.user)
-#         user_details = UserDetails.objects.get(user_details__username=request.user)
-#         patient_details = Patient.objects.get(user_details=request.user)
-#         return render(request, "editprofile.html", {'login_details':login_details,'user_details':user_details,'patient_details':patient_details})
-
- 
-
 
 
 def register_patient_view(request):
@@ -181,7 +172,7 @@ class BookAppointmentView(View):
                                                        booking_token=token)
                         return redirect('dashboard')
                     if token['booking_token'] != 0:
-                        if token['booking_token'] < 1:
+                        if token['booking_token'] < 20:
                             token = token['booking_token'] + 1
 
                             BookAppointment.objects.create(user_details=user_details, doctor_details=doctor_details,
@@ -203,42 +194,36 @@ class BookAppointmentView(View):
         except LoginCredentials.DoesNotExist:
             pass
 
-# def EditProfileView(request):
+class PatientUploadView(View):
     
-#    user_details = UserDetails.objects.get(user_details__username=request.user)
-#    login_details = LoginCredentials.objects.get(username=request.user)
-#    if request.method == 'POST':
-#     form = EditProfileForm(request.Post,instance=user_details)
-#     form1 = EditProfileForm1(request.POST,instance=login_details)
-#     if form.is_valid() and form1.is_valid():
-#         form.save()
-#         form1.save()
-#     return render(request, 'profile/editprofile.html', {'form' : form, 'form1':form1})   
+    def get(self, request):
+        # try:
+            login_details = LoginCredentials.objects.get(username=request.user)
+            user_details = UserDetails.objects.filter(user_details__username=login_details)
+            patient_details = Patient.objects.filter(user_details__username=login_details)
+            reports = Reports.objects.filter(user_details__username=login_details)
+            print(reports)
+            context = {
+                'login_details': login_details,
+                'user_details': user_details,
+                'patient_details': patient_details,
+                'reports': reports
+            }
+           
+            return render(request, 'patient_profile_upload.html', context)
+        # except:
+        #     return redirect('dashboard')
+    def post(self,request):
+        # try:
+            patient = LoginCredentials.objects.get(username=request.user)
+            print(patient)
+            scanned_report = request.FILES.get('scanned_report')
+            Reports.objects.create(user_details = patient, scanned_report=scanned_report)
+            return redirect('profile-upload')
 
 
-# class EditProfileView(View):
-#     userform = EditProfileForm
-#     loginform = EditProfileForm1
 
-#     def post(self,request):
-#         data = request.POST or None
-#         userform = EditProfileForm(data,instance=request.user)
-#         loginform = EditProfileForm1(data,instance=request.user)
 
-#         if userform.is_valid() and loginform.is_valid():
-#             userform.save()
-#             loginform.save()
-#             messages.success(request,"profile edited successfully")
-            
-#             context = {
-#                 'userform':userform,
-#                 'loginform':loginform
-#                 }
-#             return redirect('profile-edit')
-#         return render(request,'editprofile.html',context)
-
-#     def get(self,request):
-#         return self.post(request)
 
 
 

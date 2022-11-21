@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     dashboard, sign_in, LoginView, sign_out, RegisterDoctorView, register_doctor_view,
-    DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView
+    DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, Edit_Doctor_Profile_View
 )
 
 
@@ -17,5 +17,8 @@ urlpatterns = [
     path('apply-leave/', ApplyLeaveView.as_view(), name='apply-leave'),
     path('apply-leave/<pk>', ApplyLeaveView.as_view(), name='send-leave-request'),
     path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
+
+    path('edit-doctor-profile_view/', Edit_Doctor_Profile_View.as_view(), name='editdoctorprofileview'),
+    path('doctor-profile-edit/', Edit_Doctor_Profile_View.as_view(), name='doctor-profile-edit'),
 
 ]
