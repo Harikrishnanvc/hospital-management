@@ -11,7 +11,7 @@ from users.models import BookAppointment
 from users.models import LoginCredentials, UserDetails, Patient, ScannedReport
 from .forms import PatientForm
 from paymentapp.views import order_payment
-
+from datetime import datetime
 
 # Create your views here.
 
@@ -89,7 +89,7 @@ class EditProfileView(View):
 
 def register_patient_view(request):
     form = PatientForm()
-    return render(request, 'add_patient.html', {'form': form})
+    return render(request, 'pages/sign-up.html', {'form': form})
 
 
 class RegisterPatientView(View):
@@ -102,28 +102,28 @@ class RegisterPatientView(View):
                 username = request.POST['username']
                 first_name = request.POST['first_name']
                 last_name = request.POST['last_name']
-                age = request.POST['age']
+
                 email = request.POST['email']
                 phone_number = request.POST['phone_number']
-                profile_picture = request.FILES.get('profile_photo')
-                password = request.POST['passsword']
+
+                password = request.POST.get('password')
                 LoginCredentials.objects.create_user(email=email, username=username, phone_number=phone_number,
                                                      password=password)
                 try:
 
                     user = LoginCredentials.objects.get(email=email)
                     UserDetails.objects.create(first_name=first_name, last_name=last_name,
-                                               profile_photo=profile_picture, user_details=user, user_role='patient')
-                    Patient.objects.create(age=age, token=token, user_details=user)
+                                                user_details=user, user_role='patient')
+                    Patient.objects.create(token=token, user_details=user)
                     send_email_after_registration(user.email, token)
                     messages.success(request,
                                      "your account created successfully to verify your account check your email..")
 
                     return redirect('sign-in')
                 except UserDetails.DoesNotExist:
-                    return render(request, 'add_patient.html')
+                    return render(request, 'pages/sign-up.html')
 
-        return render(request, 'add_patient.html', {'form': details})
+        return render(request, 'pages/sign-up.html', {'form': details})
 
 
 class BookAppointmentView(View):
@@ -140,6 +140,7 @@ class BookAppointmentView(View):
             patient_details = UserDetails.objects.get(user_details__username=user_details).get_full_name()
             booking_date = request.POST['booking_date']
             booking_time = request.POST['booking_time']
+
             appointment = BookAppointment.objects.filter(
                 Q(booking_date=booking_date) & Q(booking_time=booking_time) &
                 Q(doctor_details=doctor_details)).last()
@@ -155,8 +156,13 @@ class BookAppointmentView(View):
                                                                      doctor_details=doctor_details,
                                                                      booking_date=booking_date,
                                                                      booking_time=booking_time,
-                                                                     booking_token=token, booking_name=patient_details)
+                                                                     booking_token=token,
+                                                                     booking_name=patient_details)
                         pk = appointment.id
+                        status = booking_expiry(pk)
+                        print(status)
+                        if status is True:
+                            BookAppointment.objects.filter(id=pk).update(expired=True)
                         return redirect('payment', pk)
                     elif token['booking_token'] != 0:
                         if token['booking_token'] < 20:
@@ -169,6 +175,10 @@ class BookAppointmentView(View):
                                                                          booking_token=token,
                                                                          booking_name=patient_details)
                             pk = appointment.id
+                            status = booking_expiry(pk)
+                            print(status)
+                            if status is True:
+                                BookAppointment.objects.filter(id=pk).update(expired=True)
                             return redirect('payment', pk)
                         else:
                             messages.error(request, 'No slots available for selected day, please choose another day')
@@ -180,6 +190,14 @@ class BookAppointmentView(View):
                                                                  booking_date=booking_date, booking_time=booking_time,
                                                                  booking_token=token, booking_name=patient_details)
                     pk = appointment.id
+                    status = booking_expiry(pk)
+                    print(status)
+                    if status is True:
+                        print('hejfnefjnwelfne')
+                        BookAppointment.objects.filter(id=pk).update(expired=False)
+                    else:
+                        BookAppointment.objects.filter(id=pk).update(expired=True)
+
                     return redirect('payment', pk)
 
             elif appointment is not None:
@@ -189,6 +207,22 @@ class BookAppointmentView(View):
         except LoginCredentials.DoesNotExist:
             messages.error(request, 'some error occurred')
             return redirect('dashboard')
+
+
+def booking_expiry(pk):
+    data = BookAppointment.objects.get(id=pk)
+    db_date = str(data.booking_date)
+    current_date = datetime.now()
+    db_date = datetime.strptime(db_date, "%Y-%m-%d")
+    db_time = str(data.booking_time)
+    current_time = datetime.now()
+    db_time = datetime.strptime(db_time, "%H:%M:%S")
+    status = False
+    if db_date.date() >= current_date.date() and db_time.time() >= current_time.time():
+        print('here')
+        status = True
+
+    return status
 
 
 class PatientUploadView(View):

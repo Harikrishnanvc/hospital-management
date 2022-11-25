@@ -125,6 +125,7 @@ class RegisterDoctorView(View):
                                                profile_photo=profile_picture, user_details=user, user_role='doctor')
                     Doctor.objects.create(department=department, qualification=qualification, user_details=user)
                     return redirect('dashboard')
+
                 except UserDetails.DoesNotExist:
                     return render(request, 'add_doctor.html')
 
@@ -147,16 +148,19 @@ class DoctorProfileView(View):
         return render(request, 'pages/profile.html', context)
 
 
+
+
+
 class ApplyLeaveView(View):
     def get(self, request):
-        return render(request, 'pages/register.html')
+        return render(request, 'pages/apply_leave.html')
 
     def post(self, request, *args, **kwargs):
         from_date = request.POST['from_date']
         to_date = request.POST['to_date']
         email = request.POST['email']
         leave_reason = request.POST['leave_reason']
-        leave_type = request.POST['leave_type']
+        leave_type = request.POST.get('leave_type')
         try:
             user = LoginCredentials.objects.get(username=request.user)
             Leave.objects.create(from_date=from_date, to_date=to_date, leave_type=leave_type,
@@ -186,7 +190,6 @@ class OtpValidation(View):
         phone = request.GET.get('phone')
         try:
             mobile = LoginCredentials.objects.get(Q(phone_number=phone) & ~Q(is_superuser=True))
-            mobile.save()
             keygen = GenerateKey()
             key = base64.b32encode(keygen.return_value(phone).encode())  # Key is generated
             otp = pyotp.TOTP(key, interval=EXPIRY_TIME)  # TOTP Model for OTP is created
@@ -259,7 +262,7 @@ def send_sms(message, receiver):
     return redirect('dashboard')
 
 
-class Edit_Doctor_Profile_View(View):
+class EditDoctorProfileView(View):
 
     def get(self, request):
 
@@ -272,13 +275,8 @@ class Edit_Doctor_Profile_View(View):
             'doctor_details': doctor_details
         }
         return render(request, 'editdoctorprofile.html', context)
-        # return render(request, "editprofile.html", {'login_details':login_details,'user_details':user_details,'patient_details':patient_details})
 
     def post(self, request):
-        # login_details = UpdateProfileForm()
-        # user_details = UpdateUserForm(request.POST,request.FILES)
-        # patient_details = UpdatePatientForm()
-
         if request.method == 'POST':
             try:
                 login_details = LoginCredentials.objects.get(username=request.user)

@@ -45,7 +45,7 @@ class Doctor(models.Model):
 
 class Patient(models.Model):
     user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
-    age = models.IntegerField()
+    age = models.IntegerField(null=True)
     token = models.CharField(max_length=150, null=True)
     verify = models.BooleanField(null=True, blank=True, default=False)
 
@@ -94,6 +94,7 @@ class BookAppointment(models.Model):
     booking_time = models.TimeField(null=True)
     booking_token = models.IntegerField(default=0, null=True)
     booking_status = models.BooleanField(default=False)
+    expired = models.BooleanField(null=True)
 
     def __str__(self):
         return self.user_details.username

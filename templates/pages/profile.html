@@ -116,13 +116,13 @@
             </li>
         </ul>
     </div>
-<!--    <div class="sidenav-footer position-absolute w-100 bottom-0 ">-->
-<!--        <div class="mx-3">-->
-<!--            <a class="btn bg-gradient-primary mt-4 w-100"-->
-<!--               href="https://www.creative-tim.com/product/material-dashboard-pro?ref=sidebarfree" type="button">Upgrade-->
-<!--                to pro</a>-->
-<!--        </div>-->
-<!--    </div>-->
+    <!--    <div class="sidenav-footer position-absolute w-100 bottom-0 ">-->
+    <!--        <div class="mx-3">-->
+    <!--            <a class="btn bg-gradient-primary mt-4 w-100"-->
+    <!--               href="https://www.creative-tim.com/product/material-dashboard-pro?ref=sidebarfree" type="button">Upgrade-->
+    <!--                to pro</a>-->
+    <!--        </div>-->
+    <!--    </div>-->
 </aside>
 <div class="main-content position-relative max-height-vh-100 h-100">
     <!-- Navbar -->
@@ -150,9 +150,9 @@
                            href="https://www.creative-tim.com/builder/material?ref=navbar-dashboard">Online Builder</a>
                     </li>
                     <li class="nav-item d-flex align-items-center">
-                        <a href="../pages/sign-in.html" class="nav-link text-body font-weight-bold px-0">
+                        <a href="{% url 'sign-out' %}" class="nav-link text-body font-weight-bold px-0">
                             <i class="fa fa-user me-sm-1"></i>
-                            <span class="d-sm-inline d-none">Sign In</span>
+                            <span class="d-sm-inline d-none">Sign Out</span>
                         </a>
                     </li>
                     <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -219,7 +219,7 @@
                                         <div class="avatar avatar-sm bg-gradient-secondary  me-3  my-auto">
                                             <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1"
                                                  xmlns="http://www.w3.org/2000/svg"
-                                                 xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            >
                                                 <title>credit-card</title>
                                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                                     <g transform="translate(-2169.000000, -745.000000)" fill="#FFFFFF"
@@ -256,7 +256,7 @@
         </div>
     </nav>
     <!-- End Navbar -->
-<!--    Patient-->
+    <!--    Patient-->
 
     <div class="container-fluid px-2 px-md-4">
         <div class="page-header min-height-300 border-radius-xl mt-4"
@@ -269,16 +269,16 @@
         {% if user_detail.user_role == 'patient' %}
 
 
-
-
         <div class="card card-body mx-3 mx-md-4 mt-n6">
             <div class="row gx-4 mb-2">
+                {% if user_detail.profile_photo %}
                 <div class="col-auto">
                     <div class="avatar avatar-xl position-relative">
                         <img src="{{ user_detail.profile_photo.url }}" alt="profile_image"
                              class="w-100 border-radius-lg shadow-sm">
                     </div>
                 </div>
+                {% endif %}
                 <div class="col-auto my-auto">
                     <div class="h-100">
 
@@ -291,33 +291,27 @@
                         </p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+                <div class="col-lg-3 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
                     <div class="nav-wrapper position-relative end-0">
-                        <ul class="nav nav-pills nav-fill p-1" role="tablist">
-
+                        <ul class="nav nav-pills nav-fill p-3" role="tablist">
                             <li class="nav-item">
-                                
-                                <a class="nav-link mb-0 px-0 py-1 active " data-bs-toggle="tab" 
+                                <a class=" " data-bs-toggle="tab"
                                    role="tab" aria-selected="true">
-                                   <a href="{% url 'editprofileview' %}">Edit profile</a>
-                                    <!-- <i class="material-icons text-lg position-relative">home</i> -->
-                                    <span class="ms-1"></span>
+                                    <a class="btn bg-gradient-info" href="{% url 'editprofileview' %}">
+                                        <i class="material-icons text-lg position-relative">chat</i>
+                                        <span class="ms-1">Chat</span></a>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab"
-                                   aria-selected="false">
-                                    <i class="material-icons text-lg position-relative">email</i>
-                                    <span class="ms-1">Messages</span>
+                                <a class=" " data-bs-toggle="tab"
+                                   role="tab" aria-selected="true">
+                                    <a class="btn bg-gradient-primary" href="{% url 'editprofileview' %}">
+                                        <i class="material-icons text-lg position-relative">edit</i>
+                                        <span class="ms-1">Update</span></a>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab"
-                                   aria-selected="false">
-                                    <i class="material-icons text-lg position-relative">settings</i>
-                                    <span class="ms-1">Settings</span>
-                                </a>
-                            </li>
+
+
                         </ul>
                     </div>
                 </div>
@@ -350,7 +344,7 @@
                                     <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Username:</strong>
                                         &nbsp; {{ login_detail.username }}
                                     </li>
-                                    
+
                                     <li class="list-group-item border-0 ps-0 pb-0">
                                         <strong class="text-dark text-sm">Social:</strong> &nbsp;
                                         <a class="btn btn-facebook btn-simple mb-0 ps-1 pe-2 py-0" href="javascript:;">
@@ -369,63 +363,62 @@
                     </div>
 
 
-
                     <div class="col-12 col-xl-4">
                         <div class="card card-plain h-100">
-                            <div class="card-header pb-0 p-3">
-                                <h6 class="mb-0">Reports</h6>
-                            </div>
+
                             <div class="card-body p-3">
                                 <ul class="list-group">
                                     <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2 pt-0">
                                         <div class="avatar me-3">
-                    
+
                                         </div>
                                         <form method="post" enctype="multipart/form-data"
                                               action="{% url 'profile-upload' %}">
                                             {% csrf_token %}
                                             <div class="custom-file pmd-custom-file-outline">
-                                                <h6>scanned_report</h6>
+                                                <h6>Scanned Report</h6>
                                                 <div class="form__group" style="margin-bottom:10px;">
-                    
-                                                     <input type="text"
-                                                           style="width:250px; height:40px; border:none;" name="scanned_report"
-                                                           class="form__input" id="name" placeholder="scanned_report"
-                                                           /> 
-                    
+
+                                                    <input type="text"
+                                                           style="width:250px; height:40px; border:none;"
+                                                           name="scanned_report"
+                                                           class="form__input" id="name" placeholder="Note"
+                                                    />
+
                                                 </div>
                                                 <input type="file" name="scanned_report" class="custom-file-input"
                                                        id="inverse_customOutlineFile">
-                    
+
                                                 <button type="submit"
-                                                        class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto">Submit
+                                                        class="btn btn-link pe-2 ps-0 mb-0 ms-auto w-25 w-md-auto">
+                                                    Submit
                                                 </button>
                                             </div>
                                         </form>
-                    
+
                                     </li>
-                    
+
                                 </ul>
                             </div>
                         </div>
                     </div>
-                        <div class="row">{% for report in reports %}
-                            <div class="col-xl-3 col-md-6 mb-xl-0 mb-4">
-                                <div class="card card-blog card-plain">
-                                    <div class="card-header p-0 mt-n4 mx-3">
-                                        <a class="d-block shadow-xl border-radius-xl">
+                    <div class="row">{% for report in reports %}
+                        <div class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                            <div class="card card-blog card-plain">
+                                <div class="card-header p-0 mt-n4 mx-3">
+                                    <a class="d-block shadow-xl border-radius-xl">
 
-                                            <iframe src="{{ report.prescription.url }}" alt="img-blur-shadow"
-                                                    class="img-fluid shadow border-radius-xl"></iframe>
-                                        </a>
-                                    </div>
-                               
+                                        <iframe src="{{ report.prescription.url }}" alt="img-blur-shadow"
+                                                class="img-fluid shadow border-radius-xl"></iframe>
+                                    </a>
                                 </div>
+
                             </div>
-                    
                         </div>
-                    
-                        {% endfor %}
+
+                    </div>
+
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -448,113 +441,113 @@
 
 <!--    Doctor-->
 
-    <div class="container-fluid px-2 px-md-4">
+<div class="container-fluid px-2 px-md-4">
 
-        {% for user_detail in user_details %}
-        {% for login_detail in login_details %}
-        {% if user_detail.user_role == 'doctor' %}
-        {% for doctor in doctor_details %}
+    {% for user_detail in user_details %}
+    {% for login_detail in login_details %}
+    {% if user_detail.user_role == 'doctor' %}
+    {% for doctor in doctor_details %}
 
 
-
-        <div class="card card-body mx-3 mx-md-4 mt-n6">
-            <div class="row gx-4 mb-2">
-                <div class="col-auto">
-                    <div class="avatar avatar-xl position-relative">
-                        <img src="{{ user_detail.profile_photo.url }}" alt="profile_image"
-                             class="w-100 border-radius-lg shadow-sm">
-                    </div>
-                </div>
-                <div class="col-auto my-auto">
-                    <div class="h-100">
-
-                        <h5 class="mb-1">{% if user_detail.user_role == 'doctor' %}Dr.{% endif %}
-                            {{ user_detail.get_full_name }}
-                        </h5>
-
-                        <p class="mb-0 font-weight-normal text-sm">
-                            {{ doctor.department }} / {{ doctor.qualification }}
-                        </p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
-                    <div class="nav-wrapper position-relative end-0">
-                        <ul class="nav nav-pills nav-fill p-1" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link mb-0 px-0 py-1 active " data-bs-toggle="tab" 
-                                   role="tab" aria-selected="true">
-                                   <a href="{% url 'editdoctorprofileview' %}">Edit profile</a>
-                                    <!-- <i class="material-icons text-lg position-relative">home</i> -->
-                                    <span class="ms-1"></span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab"
-                                   aria-selected="false">
-                                    <i class="material-icons text-lg position-relative">email</i>
-                                    <span class="ms-1">Messages</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab"
-                                   aria-selected="false">
-                                    <i class="material-icons text-lg position-relative">settings</i>
-                                    <span class="ms-1">Settings</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+    <div class="card card-body mx-3 mx-md-4 mt-n6">
+        <div class="row gx-4 mb-2">
+            <div class="col-auto">
+                <div class="avatar avatar-xl position-relative">
+                    <img src="{{ user_detail.profile_photo.url }}" alt="profile_image"
+                         class="w-100 border-radius-lg shadow-sm">
                 </div>
             </div>
-            <div class="row">
-                <div class="row">
-                    <div class="col-12 col-xl-4">
-                        <div class="card card-plain h-100">
-                            <div class="card-header pb-0 p-3">
-                                <h6 class="mb-0">Platform Settings</h6>
-                            </div>
+            <div class="col-auto my-auto">
+                <div class="h-100">
 
-                            <div class="card-body p-3">
-                                <p class="text-sm">
-                                    Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two
-                                    equally difficult paths, choose the one more painful in the short term (pain
-                                    avoidance is creating an illusion of equality).
-                                </p>
-                                <hr class="horizontal gray-light my-4">
-                                <ul class="list-group">
-                                    <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Full
-                                        Name:</strong> &nbsp; {{ user_detail.get_full_name }}
-                                    </li>
-                                    <li class="list-group-item border-0 ps-0 text-sm"><strong
-                                            class="text-dark">Mobile:</strong> &nbsp; {{ login_detail.phone_number }}
-                                    </li>
-                                    <li class="list-group-item border-0 ps-0 text-sm"><strong
-                                            class="text-dark">Email:</strong> &nbsp; {{ login_detail.email }}
-                                    </li>
-                                    <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Username:</strong>
-                                        &nbsp; {{ login_detail.username }}
-                                    </li>
-                                    <li class="list-group-item border-0 ps-0 pb-0">
-                                        <strong class="text-dark text-sm">Social:</strong> &nbsp;
-                                        <a class="btn btn-facebook btn-simple mb-0 ps-1 pe-2 py-0" href="javascript:;">
-                                            <i class="fab fa-facebook fa-lg"></i>
-                                        </a>
-                                        <a class="btn btn-twitter btn-simple mb-0 ps-1 pe-2 py-0" href="javascript:;">
-                                            <i class="fab fa-twitter fa-lg"></i>
-                                        </a>
-                                        <a class="btn btn-instagram btn-simple mb-0 ps-1 pe-2 py-0" href="javascript:;">
-                                            <i class="fab fa-instagram fa-lg"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    <h5 class="mb-1">{% if user_detail.user_role == 'doctor' %}Dr.{% endif %}
+                        {{ user_detail.get_full_name }}
+                    </h5>
 
+                    <p class="mb-0 font-weight-normal text-sm">
+                        {{ doctor.department }} / {{ doctor.qualification }}
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+                <div class="nav-wrapper position-relative end-0">
+                    <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link mb-0 px-0 py-1 active " data-bs-toggle="tab"
+                               role="tab" aria-selected="true">
+                                <a href="{% url 'editdoctorprofileview' %}">Edit profile</a>
+                                <!-- <i class="material-icons text-lg position-relative">home</i> -->
+                                <span class="ms-1"></span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab"
+                               aria-selected="false">
+                                <i class="material-icons text-lg position-relative">email</i>
+                                <span class="ms-1">Messages</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab"
+                               aria-selected="false">
+                                <i class="material-icons text-lg position-relative">settings</i>
+                                <span class="ms-1">Settings</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="row">
+                <div class="col-12 col-xl-4">
+                    <div class="card card-plain h-100">
+                        <div class="card-header pb-0 p-3">
+                            <h6 class="mb-0">Platform Settings</h6>
+                        </div>
+
+                        <div class="card-body p-3">
+                            <p class="text-sm">
+                                Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two
+                                equally difficult paths, choose the one more painful in the short term (pain
+                                avoidance is creating an illusion of equality).
+                            </p>
+                            <hr class="horizontal gray-light my-4">
+                            <ul class="list-group">
+                                <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Full
+                                    Name:</strong> &nbsp; {{ user_detail.get_full_name }}
+                                </li>
+                                <li class="list-group-item border-0 ps-0 text-sm"><strong
+                                        class="text-dark">Mobile:</strong> &nbsp; {{ login_detail.phone_number }}
+                                </li>
+                                <li class="list-group-item border-0 ps-0 text-sm"><strong
+                                        class="text-dark">Email:</strong> &nbsp; {{ login_detail.email }}
+                                </li>
+                                <li class="list-group-item border-0 ps-0 text-sm"><strong
+                                        class="text-dark">Username:</strong>
+                                    &nbsp; {{ login_detail.username }}
+                                </li>
+                                <li class="list-group-item border-0 ps-0 pb-0">
+                                    <strong class="text-dark text-sm">Social:</strong> &nbsp;
+                                    <a class="btn btn-facebook btn-simple mb-0 ps-1 pe-2 py-0" href="javascript:;">
+                                        <i class="fab fa-facebook fa-lg"></i>
+                                    </a>
+                                    <a class="btn btn-twitter btn-simple mb-0 ps-1 pe-2 py-0" href="javascript:;">
+                                        <i class="fab fa-twitter fa-lg"></i>
+                                    </a>
+                                    <a class="btn btn-instagram btn-simple mb-0 ps-1 pe-2 py-0" href="javascript:;">
+                                        <i class="fab fa-instagram fa-lg"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
+</div>
 </div>
 </div>
 </div>
@@ -676,6 +669,7 @@
       }
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
+
 
 
 </script>

@@ -1,19 +1,16 @@
-from django.shortcuts import render, redirect
-from .models import Order
-from django.views.decorators.csrf import csrf_exempt
+import json
+
 import razorpay
 from django.conf import settings
-from .constants import PaymentStatus
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-import json
+
 from users.models import LoginCredentials, BookAppointment
+from .constants import PaymentStatus
+from .models import Order
 
 
 # Create your views here.
-
-
-def home(request):
-    return render(request, "payment/index.html")
 
 
 def order_payment(request, pk):
@@ -49,7 +46,6 @@ def callback(request, pk):
         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
         return client.utility.verify_payment_signature(response_data)
 
-
     if "razorpay_signature" in request.POST:
         payment_id = request.POST.get("razorpay_payment_id", "")
         provider_order_id = request.POST.get("razorpay_order_id", "")
@@ -80,7 +76,3 @@ def callback(request, pk):
         order.status = PaymentStatus.FAILURE
         order.save()
         return render(request, "payment/callback.html", context={"status": order.status})
-
-
-def test(request):
-    return render(request, 'payment/callback.html')

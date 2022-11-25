@@ -1,122 +1,117 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sign Up 06</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="{% static 'assets/css/sign-up-style.css' %}">
+
 </head>
-
 <body>
-    <form method="post" enctype="multipart/form-data" action="{% url 'profile-edit' %}">
-        {% csrf_token %}
-       <div class="main-content">
-         <div class="container mt-7">
-           <!-- Table -->
-     <!--      <h2 class="mb-5">Register a new patient</h2>-->
-     
-           <div class="row">
-             <div class="col-xl-8 m-auto order-xl-1">
-               <div class="card bg-secondary shadow">
-                 <div class="card-header bg-white border-0">
-                   <div class="row align-items-center">
-                     <div class="col-8">
-                       <h3 class="mb-0">Edit Patient Details<h3>
-                     </div>
-                     <div class="col-4 text-right">
-     <!--                  <a href="#!" >back</a>-->
-                       <a onclick="window.history.go(-1); return false;" class="btn btn-sm btn-primary" style="cursor: pointer; color:white;">Go Back</a>
-                     </div>
-                   </div>
-                 </div>
-                 <div class="card-body">
-     
-                     <h6 class="heading-small text-muted mb-4">Patient information</h6>
-                     <div class="pl-lg-4">
-                       <div class="row">
-                         <div class="col-lg-6">
-                           <div class="form-group focused">
-                             <label class="form-control-label" for="input-username">Username</label>
-                             <input type="text" id="input-username" name="username" value="{{ login_details.username }}" class="form-control form-control-alternative" placeholder="Username" >
-                           </div>
-                           <h5>{{ form.errors.username }}</h5>
-                         </div>
-                 
-                        <br>
-                       </div>
-                       <div class="row">
-                         <div class="col-lg-6">
-                           <div class="form-group focused">
-                             <label class="form-control-label" for="input-first-name">First name</label>
-                             <input type="text" id="input-first-name" name="first_name" value="{{ user_details.first_name }}" class="form-control form-control-alternative" placeholder="First name" >
-                           </div>
-                         </div>
-                         <br>
-                         <div class="col-lg-6">
-                           <div class="form-group focused">
-                             <label class="form-control-label" for="input-last-name">Last name</label>
-                             <input type="text" id="input-last-name" name="last_name" value="{{ user_details.last_name }}" class="form-control form-control-alternative" placeholder="Last name" >
-                           </div>
-                         </div>
-                         <br>
-                         <div class="col-lg-6">
-                            <div class="form-group">
-                              <label class="form-control-label" for="input-email">Email address</label>
-                              <input type="email" id="input-email" name="email" value="{{ login_details.email }}" class="form-control form-control-alternative" placeholder="jesse@example.com">
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="wrap d-md-flex">
+                    <div class="text-wrap p-4 p-lg-5 d-flex img"
+                         style="background-image: url({% static 'assets/images/bg.jpg' %});">
+                        <div class="text w-100">
+                            <h2 class="mb-4">Welcome to signup form</h2>
+                            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia,
+                                there live the blind texts.</p>
+                        </div>
+                    </div>
+                    <div class="login-wrap p-4 p-md-5">
+
+                        <form method="post" enctype="multipart/form-data" action="{% url 'profile-edit' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="label" for="name">First Name</label>
+                                        <input type="text" name="first_name" value="{{ user_details.first_name }}"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="label" for="name">Last Name</label>
+                                        <input type="text" name="last_name" value="{{ user_details.last_name }}"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="label" for="email">Email Address</label>
+                                        <input type="text" name="email" value="{{ login_details.email }}"
+                                               class="form-control">
+                                    </div>
+                                    <p>{{ form.errors.email }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="label" for="email">Username</label>
+                                        <input type="text" name="username" value="{{ login_details.username }}"
+                                               class="form-control">
+                                    </div>
+                                    <p>{{ form.errors.username }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="label" for="email">Phone Number</label>
+                                        <input type="text" name="phone_number" value="{{ login_details.phone_number }}"
+                                               class="form-control">
+                                    </div>
+                                    <p>{{ form.errors.phone_number }}</p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="label" for="password">Profile Photo</label>
+                                        <input type="file" name="profile_photo" value="{{ user_details.profile_photo }}"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                 <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="label" for="password">Age</label>
+                                        <input type="text" name="age" value="{{ patient_details.age }}"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-danger submit p-2 ">Update
+
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <h5>{{ form.errors.email }}</h5>
-                          </div>
-                       </div>
-                       <br>
-                     </div>
 
-                     <div class="pl-lg-4">
-                       <div class="row">
-                         <div class="col-md-12">
-                           <div class="form-group focused">
-                             <label class="form-control-label"  for="input-address">Profile Photo</label>
+                        </form>
 
-                             <input id="input-address" class="form-control form-control-alternative" multiple name="profile_photo" value="{{ user_details.profile_photo }}" placeholder="profile photo" type="file">
-                           
-                            </div>
-                         </div>
-                         <br>
-                       </div>
-                       <div class="row">
-                         <div class="col-lg-4">
-                           <div class="form-group focused">
-                             <label class="form-control-label" for="input-city">Age</label>
-                             <input type="number" name="age" value="{{ patient_details.age }}" class="form-control form-control-alternative" placeholder="age" >
-                           </div>
-                         </div>
-                         <br>
-                         <div class="col-lg-4">
-                           <div class="form-group">
-                             <label class="form-control-label" for="input-country">Phone Number</label>
-                             <input type="number" id="input-postal-code" name="phone_number" value="{{ login_details.phone_number }}" class="form-control form-control-alternative" placeholder="+919846*****">
-                           </div>
-                           <h5>{{ form.errors.phone_number }}</h5>
-                         </div>
-                       </div>
-                       <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</section>
 
-                     </div>
-     
-                     <div class="text-center">
-                       <button type="submit" class="btn btn-lg btn-primary w-100 my-4 mb-2">Update
-                       </button>
-                     </div>
-                     <hr class="my-4">
-                     <!-- Description -->
-     
-                   </form>
-                 </div>
-               </div>
-             </div>
-           </div>
-         </div>
-       </div>
-     </body>
-    
+<script src="{% static 'assets/js/jquery.min.js' %}"></script>
+<script src="{% static 'assets/js/popper.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
 </html>

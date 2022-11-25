@@ -93,7 +93,7 @@
                 <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account pages</h6>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white active bg-gradient-primary" href="../pages/profile.html">
+                <a class="nav-link text-white active bg-gradient-primary" >
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">person</i>
                     </div>
@@ -152,9 +152,9 @@
                            href="https://www.creative-tim.com/builder/material?ref=navbar-dashboard">Online Builder</a>
                     </li>
                     <li class="nav-item d-flex align-items-center">
-                        <a href="../pages/sign-in.html" class="nav-link text-body font-weight-bold px-0">
+                        <a href="{% url 'sign-out' %}" class="nav-link text-body font-weight-bold px-0">
                             <i class="fa fa-user me-sm-1"></i>
-                            <span class="d-sm-inline d-none">Sign In</span>
+                            <span class="d-sm-inline d-none">Sign Out</span>
                         </a>
                     </li>
                     <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -268,10 +268,12 @@
         <div class="card card-body mx-3 mx-md-4 mt-n6">
             <div class="row gx-4 mb-2">
                 <div class="col-auto">
+                    {% if user_details.profile_photo %}
                     <div class="avatar avatar-xl position-relative">
                         <img src="{{ user_detail.profile_photo.url }}" alt="profile_image"
                              class="w-100 border-radius-lg shadow-sm">
                     </div>
+                    {% endif %}
                 </div>
 
 

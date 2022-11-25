@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2>Monthly Patient List Table</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Booking Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    {% for list in data %}
+    <tbody>
+      <tr>
+        <td>{{ list.booking_name }}</td>
+        <td>{{ list.booking_date }}</td>
+        <td>{{ list.booking_status }}</td>
+      </tr>
+    </tbody>
+    {% endfor %}
+  </table>
+</div>
+
+</body>
+</html>

@@ -126,6 +126,7 @@
                         <tbody>
                         {% for booking in patient_booking_list %}
                         {% if booking.booking_status == True %}
+                        {% if booking.expired == False %}
                         <tr>
                             <td>{{ booking.booking_name }}</td>
                             <td>{{ booking.booking_date }}</td>
@@ -133,6 +134,7 @@
                             <td>{{ booking.booking_token }}</td>
                             <td></td>
                         </tr>
+                        {% endif %}
                         {% endif %}
                         {% endfor %}
                         {% endif %}

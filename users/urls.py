@@ -4,7 +4,7 @@ from .views import (
 
     DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, OtpValidation, PasswordReset, send_sms,
 
-    DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, Edit_Doctor_Profile_View
+    DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, EditDoctorProfileView
 )
 
 urlpatterns = [
@@ -23,8 +23,7 @@ urlpatterns = [
     path('otp-validation/', OtpValidation.as_view(), name='otp-validation'),
     path('password-reset/', PasswordReset.as_view(), name='password-reset'),
     path('send-sms/', send_sms, name='send-sms'),
-
-    path('edit-doctor-profile_view/', Edit_Doctor_Profile_View.as_view(), name='editdoctorprofileview'),
-    path('doctor-profile-edit/', Edit_Doctor_Profile_View.as_view(), name='doctor-profile-edit'),
+    path('edit-doctor-profile_view/', EditDoctorProfileView.as_view(), name='editdoctorprofileview'),
+    path('doctor-profile-edit/', EditDoctorProfileView.as_view(), name='doctor-profile-edit'),
 
 ]

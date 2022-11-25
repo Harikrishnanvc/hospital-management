@@ -50,6 +50,7 @@ class BookingList(View):
         doctor_details = UserDetails.objects.filter(user_details__username=request.user)
         patient_booking_list = BookAppointment.objects.filter(doctor_details=request.user)
         booking_details = BookAppointment.objects.filter(user_details__username=request.user)
+
         context = {
             'doctor_details': doctor_details,
             'patient_booking_list': patient_booking_list,
@@ -85,3 +86,5 @@ class GeneratePdf(View):
 
         filepath = os.path.join('static', f'{file_name}.pdf')
         return FileResponse(open(filepath, 'rb'), content_type='application/pdf')
+
+
