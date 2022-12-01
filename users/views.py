@@ -17,15 +17,14 @@ from .forms import DoctorForm, PasswordForm
 from .models import LoginCredentials, UserDetails, Doctor, Leave, Patient
 
 
-# Create your views here.
-
 def dashboard(request):
     doctor_details = UserDetails.objects.filter(user_role='doctor')
     doctor_qualification = Doctor.objects.filter()
     doctor_login_details = LoginCredentials.objects.filter(userdetails__user_role='doctor')
     patient_details = UserDetails.objects.filter(user_role='patient')
-    patient = Patient.objects.filter()
+    patient = Patient.objects.all()
     patient_login_details = LoginCredentials.objects.filter(userdetails__user_role='patient')
+    leave_details = Leave.objects.filter(leave_approval=None)
 
     try:
         user_role = UserDetails.objects.get(user_details__username=request.user)
@@ -38,7 +37,9 @@ def dashboard(request):
                'patient_details': patient_details,
                'patient': patient,
                'patient_login_details': patient_login_details,
+               'leave_details': leave_details
                }
+
     return render(request, 'pages/dashboard.html', context)
 
 
@@ -71,7 +72,7 @@ class LoginView(View):
 
                     if user_role == 'admin':
                         login(request, user)
-                        return redirect('register-doctor')
+                        return redirect('dashboard')
 
                     if user_role == 'patient':
                         try:
@@ -146,9 +147,6 @@ class DoctorProfileView(View):
             'patient_details': patient_details
         }
         return render(request, 'pages/profile.html', context)
-
-
-
 
 
 class ApplyLeaveView(View):

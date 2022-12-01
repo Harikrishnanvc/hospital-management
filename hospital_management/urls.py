@@ -9,6 +9,7 @@ urlpatterns = [
     path('', include('users.urls')),
     path('doctor/', include('doctor_app.urls')),
     path('patient/', include('patient_app.urls')),
+    path('chat/', include('chat_app.urls')),
     path("payment/<pk>", views.order_payment, name="payment"),
     path("callback/<pk>", views.callback, name="callback"),
 

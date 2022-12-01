@@ -18,7 +18,7 @@ class LoginCredentials(AbstractUser):
 
 
 class UserDetails(models.Model):
-    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
+    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True, related_name='userdetails')
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
     user_role = models.CharField(default='admin', max_length=50)
@@ -35,7 +35,7 @@ class UserDetails(models.Model):
 
 
 class Doctor(models.Model):
-    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
+    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True, related_name='doctor')
     department = models.CharField(max_length=100)
     qualification = models.CharField(max_length=150)
 
@@ -79,7 +79,7 @@ class Leave(models.Model):
     to_date = models.DateField(null=True)
     leave_type = models.CharField(max_length=50, null=True)
     leave_reason = models.CharField(max_length=150, null=True)
-    leave_approval = models.BooleanField(null=True, default=False)
+    leave_approval = models.BooleanField(null=True)
 
     def __str__(self):
         return self.user_details.username

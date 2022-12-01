@@ -6,9 +6,10 @@ from django.shortcuts import render, redirect
 from django.views.generic import View
 
 from users.models import BookAppointment, PrescriptionFile
-from users.models import LoginCredentials, UserDetails, Patient
+from users.models import LoginCredentials, UserDetails, Patient, Leave, Doctor
 from .helpers import save_pdf
-
+from django.contrib.postgres.search import SearchVector, SearchQuery, TrigramWordSimilarity
+from django.db.models import Q
 
 # Create your views here.
 class PatientProfileView(View):
@@ -61,13 +62,10 @@ class BookingList(View):
 
 def open_file(request, prescription):
     current = os.getcwd()
-    prescription = PrescriptionFile.objects.get(id=prescription).prescription
-
-    f = open(f'{current}/media/prescription/Screenshot_from_2022-11-15_16-16-33_y24gd3s.png', 'rb')
-
-    if f.mode == 'r':
-        contents = f.read()
-        print(contents)
+    file = PrescriptionFile.objects.get(id=prescription).prescription
+    f = open(f'{current}/media/{file}', 'rb')
+    if f.mode == 'rb':
+        f.readlines()
     return HttpResponse(content_type='application/pdf')
 
 
@@ -86,5 +84,49 @@ class GeneratePdf(View):
 
         filepath = os.path.join('static', f'{file_name}.pdf')
         return FileResponse(open(filepath, 'rb'), content_type='application/pdf')
+
+
+class LeaveStatus(View):
+    def post(self, request, pk):
+        status = request.POST.get('status')
+        if status == 'accepted':
+            Leave.objects.filter(id=pk).update(leave_approval='True')
+        else:
+            Leave.objects.filter(id=pk).update(leave_approval='False')
+
+        return redirect('dashboard')
+
+
+class SearchView(View):
+
+    def post(self, request):
+        query = request.POST.get('search_query')
+        try:
+            user = UserDetails.objects.get(user_details__username=request.user)
+
+            if user.user_role == 'admin':
+                qs = UserDetails.objects.annotate(
+                    search=SearchVector("first_name", "last_name") +
+                    SearchVector("user_details__doctor__department", "user_role")).filter(
+                    search=SearchQuery(query)).exclude(user_role='admin')
+
+            elif user.user_role == 'doctor':
+                qs = UserDetails.objects.annotate(
+                    search=SearchVector("first_name", "last_name") +
+                    SearchVector("user_role")).filter(
+                    Q(search=SearchQuery(query)) & ~Q(user_role='doctor') & ~Q(user_role='admin'))
+
+            elif user.user_role == 'patient':
+                qs = UserDetails.objects.annotate(
+                    search=SearchVector("first_name", "last_name") +
+                    SearchVector("user_details__doctor__department", "user_role")).filter(
+                    Q(search=SearchQuery(query)) & ~Q(user_role='patient') & ~Q(user_role='admin'))
+            else:
+                return HttpResponse('No match found')
+
+            return render(request, 'pages/base.html', {'context': qs})
+
+        except UserDetails.DoesNotExist:
+            return HttpResponse('Please Login')
 
 

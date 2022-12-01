@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="apple-touch-icon" sizes="76x76" href="{% static 'assets/img/apple-icon.png' %}">
     <link rel="icon" type="image/png" href="{% static 'assets/img/favicon.png' %}">
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <title>
         Hospital Management
     </title>
@@ -117,12 +120,14 @@
             </li>
         </ul>
     </div>
+    {% if user_role.user_role == 'admin' %}
     <div class="sidenav-footer position-absolute w-100 bottom-20 ">
         <div class="mx-3">
             <a class="btn bg-gradient-primary mt-4 w-100"
                href="{% url 'add-doctor' %}" type="button">Add Doctors</a>
         </div>
     </div>
+    {% endif %}
 </aside>
 <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
@@ -140,8 +145,12 @@
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                     <div class="input-group input-group-outline">
-                        <label class="form-label">Type here...</label>
-                        <input type="text" class="form-control">
+                        <form method="post" action="{% url 'search-query' %}">
+                            {% csrf_token %}
+                        <label class="form-label" ></label>
+                        <input type="text" name="search_query" class="form-control" placeholder="search">
+                            <input type="submit" hidden>
+                        </form>
                     </div>
                 </div>
                 <ul class="navbar-nav  justify-content-end">
@@ -256,6 +265,7 @@
         </div>
     </nav>
     <!-- End Navbar -->
+
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
@@ -331,6 +341,7 @@
                 </div>
             </div>
         </div>
+
         <div class="row mt-4">
             <div class="col-lg-4 col-md-6 mt-4 mb-4">
                 <div class="card z-index-2 ">
@@ -388,7 +399,7 @@
                     <div class="card-body">
                         <h6 class="mb-0 ">Leave Status</h6>
                         <hr style="margin-top:55px;">
-
+                        {% if user_role.user_role == 'doctor' %}
                         <div class="d-flex ">
                             <div class="sidenav-footer position-absolute w-100 bottom-3 ">
                                 <div class="mx-8">
@@ -397,6 +408,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -408,7 +420,7 @@
                     <div class="card-header pb-0">
                         <div class="row">
                             <div class="col-lg-6 col-7">
-                                {% if user_role.user_role == 'admin' %}
+                                {% if user_role.user_role == 'patient' %}
                                 <h6>Doctors</h6>
                                 {% endif %}
                                 {% if user_role.user_role == 'doctor' %}
@@ -433,6 +445,9 @@
                             </div>
                         </div>
                     </div>
+
+                    <!------------------------------------------------Doctor-------------------------------------------------------------->
+
                     {% if user_role.user_role == 'doctor' %}
 
 
@@ -448,7 +463,7 @@
                                         Age
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        email
+                                        Email
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
 
@@ -493,13 +508,27 @@
 
                                     <td class="align-middle">
                                         {% for j in patient_login_details %}
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <a class="btn bg-gradient-dark mt-3 w-100"
-                                               href="{% url 'patient-profile' j.id %}">View Profile</a>
+                                        <div class="progress-wrapper w-65">
+                                            <a class="btn bg-gradient-dark btn-sm"
+                                               href="{% url 'patient-profile' j.id %}">
+
+                                                <span class="ms-2">View Profile</span>
+                                            </a>
+
                                         </div>
                                         {% endfor %}
                                     </td>
-
+                                    <td class="align-middle">
+                                        {% for dr in doctor_login_details %}
+                                        <div class="progress-wrapper w-100 mx-auto">
+                                            <a class="btn bg-gradient-info btn-sm"
+                                               href="{% url 'message-page' %}">
+                                                <i class="material-icons text-lg position-relative">forum</i>
+                                                <span class="ms-2">Chat</span></a>
+                                            </a>
+                                        </div>
+                                        {% endfor %}
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -508,8 +537,10 @@
                     </div>
                 </div>
             </div>
+
             {% endif %}
 
+            <!--------------------------------------------Patient----------------------------------------------------------------->
 
             {% if user_role.user_role == 'patient' %}
 
@@ -570,24 +601,28 @@
                             </td>
 
                             <td class="align-middle">
-                                        {% for dr in doctor_login_details %}
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <a class="btn bg-gradient-dark mt-2 w-100"
-                                               href="{% url 'book-appointment-view' dr.id %}">Book</a>
-                                        </div>
-                                        {% endfor %}
-                                    </td>
+                                {% for dr in doctor_login_details %}
+                                <div class="progress-wrapper w-75 mx-auto">
+                                    <a class="btn bg-gradient-dark mt-2 w-100"
+                                       href="{% url 'book-appointment-view' dr.id %}">
 
+                                        <span class="ms-1">Book</span></a>
+                                </div>
+                                {% endfor %}
+                            </td>
 
 
                             <td class="align-middle">
-                                        {% for dr in doctor_login_details %}
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <a class="btn bg-gradient-dark mt-2 w-100"
-                                               >Schedule</a>
-                                        </div>
-                                        {% endfor %}
-                                    </td>
+                                {% for dr in doctor_login_details %}
+                                <div class="progress-wrapper w-60 mx-auto">
+                                    <a class="btn bg-gradient-info mt-2 w-100"
+                                       href="{% url 'message-page' %}">
+                                        <i class="material-icons text-lg position-relative">forum</i>
+                                        <span class="ms-1">Chat</span></a>
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            </td>
 
                         </tr>
                         </tbody>
@@ -598,6 +633,121 @@
         </div>
     </div>
     {% endif %}
+
+    <!------------------------------------------------------Admin--------------------------------------------------------->
+
+    {% if user_role.user_role == 'admin' %}
+
+
+    <div class="card-body px-0 pb-2">
+        <div class="table-responsive">
+            <table class="table align-items-center mb-0">
+                <thead>
+
+                <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-4">Name
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                        From
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-8" >
+                        Leave Type
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-8">
+                        Reason
+                    </th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        {% for leave in leave_details %}
+                        {% for user in leave.user_details.userdetails.all %}
+                        <div class="d-flex px-2 py-1">
+                            <div>
+                                <img src="{{ user.profile_photo.url }}"
+                                     class="avatar avatar-sm me-3" alt="xd">
+                            </div>
+
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">{{ user.get_full_name }}</h6>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% endfor %}
+                    </td>
+
+                    <td>
+                        {% for leave in leave_details %}
+                        <div class="d-flex px- py-2">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-2 text-sm">{{ leave.from_date }}</h6>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for leave in leave_details %}
+                        <div class="d-flex px- py-2 " style="margin-left:150px;">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-2 text-sm">{{ leave.leave_type }}</h6>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for leave in leave_details %}
+                        <div class="d-flex px- py-2 " style="margin-left:150px;">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-2 text-sm">{{ leave.leave_reason }}</h6>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </td>
+                    {% for leave in leave_details %}
+                    <form method="post" action="{% url 'leave-status' leave.id %}">
+                        {% csrf_token %}
+                        {% endfor %}
+                        <td class="align-middle">
+                            {% for leave in leave_details %}
+                            <div class="progress-wrapper w-65">
+                                <button type="submit" class="btn bg-gradient-success btn-sm">
+                                    <i class="material-icons text-lg position-relative">done</i>
+                                    <input type="hidden" value="accepted" name="status">
+                                    <span class="ms-2">Accept</span></button>
+                            </div>
+                            {% endfor %}
+                        </td>
+                    </form>
+                    {% for leave in leave_details %}
+                    <form method="post" action="{% url 'leave-status' leave.id %}">
+                        {% csrf_token %}
+                        {% endfor %}
+                        <td class="align-middle">
+                            {% for leave in leave_details %}
+                            <div class="progress-wrapper w-100 mx-auto">
+                                <button class="btn bg-gradient-danger btn-sm">
+                                    <i class="material-icons text-lg position-relative">close</i>
+                                    <input type="hidden" value="rejected" name="status">
+                                    <span class="ms-2">Reject</span></button>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </td>
+                    </form>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    </div>
+    </div>
+
+    {% endif %}
+
+
     <div class="col-lg-4 col-md-6">
         <div class="card h-100">
             <div class="card-header pb-0">
@@ -678,6 +828,18 @@
                         ©
                         <script>
                   document.write(new Date().getFullYear())
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1048,6 +1210,18 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 <script>
     var win = navigator.platform.indexOf('Win') > -1;
@@ -1057,6 +1231,18 @@
       }
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

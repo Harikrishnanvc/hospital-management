@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     'users',
     'patient_app',
     'doctor_app',
-    'easy_pdf',
     'paymentapp',
+    'chat_app',
+    'easy_pdf',
     'django_celery_results',
-    'django_celery_beat'
+    'django_celery_beat',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -77,7 +79,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'hospital_management.wsgi.application'
+# WSGI_APPLICATION = 'hospital_management.wsgi.application'
+ASGI_APPLICATION = 'hospital_management.routing.application'
 
 AUTHENTICATION_BACKENDS = [
     'users.backends.EmailUsernameAuthenticationBackend'
@@ -165,8 +168,8 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = env("EMAIL_HOST_USER")
 
 #   payment integration
-RAZORPAY_KEY_ID = 'rzp_test_RkdULXUF2Pz4eh'
-RAZORPAY_KEY_SECRET = 'RgsLBoDV1lR0SwUaJxy7cvc3'
+RAZORPAY_KEY_ID = env('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = env('RAZORPAY_KEY_SECRET')
 
 #   CELERY SETTINGS
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
@@ -177,3 +180,13 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Kolkata'
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+#   DJANGO CHANNELS
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        # 'CONFIG': {
+        #     'hosts': [('127.0.0.1', 6379)],
+        # }
+    }
+}

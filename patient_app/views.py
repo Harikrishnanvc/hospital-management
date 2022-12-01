@@ -12,6 +12,7 @@ from users.models import LoginCredentials, UserDetails, Patient, ScannedReport
 from .forms import PatientForm
 from paymentapp.views import order_payment
 from datetime import datetime
+from chat_app.models import Thread
 
 # Create your views here.
 
@@ -102,20 +103,22 @@ class RegisterPatientView(View):
                 username = request.POST['username']
                 first_name = request.POST['first_name']
                 last_name = request.POST['last_name']
-
                 email = request.POST['email']
                 phone_number = request.POST['phone_number']
-
                 password = request.POST.get('password')
+                profile_photo = request.FILES.get('profile_photo')
                 LoginCredentials.objects.create_user(email=email, username=username, phone_number=phone_number,
                                                      password=password)
                 try:
 
                     user = LoginCredentials.objects.get(email=email)
                     UserDetails.objects.create(first_name=first_name, last_name=last_name,
-                                                user_details=user, user_role='patient')
+                                               user_details=user, user_role='patient', profile_photo=profile_photo)
                     Patient.objects.create(token=token, user_details=user)
-                    send_email_after_registration(user.email, token)
+                    doctors = LoginCredentials.objects.filter(userdetails__user_role='doctor')
+                    for doctor in doctors:
+                        Thread.objects.create(first_person=user, second_person=doctor)
+                    # send_email_after_registration(user.email, token)
                     messages.success(request,
                                      "your account created successfully to verify your account check your email..")
 
@@ -160,7 +163,7 @@ class BookAppointmentView(View):
                                                                      booking_name=patient_details)
                         pk = appointment.id
                         status = booking_expiry(pk)
-                        print(status)
+
                         if status is True:
                             BookAppointment.objects.filter(id=pk).update(expired=True)
                         return redirect('payment', pk)
@@ -176,7 +179,7 @@ class BookAppointmentView(View):
                                                                          booking_name=patient_details)
                             pk = appointment.id
                             status = booking_expiry(pk)
-                            print(status)
+
                             if status is True:
                                 BookAppointment.objects.filter(id=pk).update(expired=True)
                             return redirect('payment', pk)
@@ -191,9 +194,9 @@ class BookAppointmentView(View):
                                                                  booking_token=token, booking_name=patient_details)
                     pk = appointment.id
                     status = booking_expiry(pk)
-                    print(status)
+
                     if status is True:
-                        print('hejfnefjnwelfne')
+
                         BookAppointment.objects.filter(id=pk).update(expired=False)
                     else:
                         BookAppointment.objects.filter(id=pk).update(expired=True)
@@ -219,7 +222,6 @@ def booking_expiry(pk):
     db_time = datetime.strptime(db_time, "%H:%M:%S")
     status = False
     if db_date.date() >= current_date.date() and db_time.time() >= current_time.time():
-        print('here')
         status = True
 
     return status
@@ -244,7 +246,6 @@ class PatientUploadView(View):
     def post(self, request):
         # try:
         patient = LoginCredentials.objects.get(username=request.user)
-        print(patient)
         scanned_report = request.FILES.get('scanned_report')
         ScannedReport.objects.create(user_details=patient, scanned_report=scanned_report)
         return redirect('profile-upload')
