@@ -14,7 +14,22 @@ from django.views.generic import View
 from django.views.generic.base import TemplateView
 
 from .forms import DoctorForm, PasswordForm
-from .models import LoginCredentials, UserDetails, Doctor, Leave, Patient
+from .models import LoginCredentials, UserDetails, Doctor, Leave, Patient, Banner
+from chat_app.models import Thread
+import random
+
+class HomePageView(TemplateView):
+    template_name = 'homepage.html'
+
+    def get_context_data(self,*args, **kwargs):
+        context = super(HomePageView, self).get_context_data(*args, **kwargs)
+        banner = Banner.objects.all()
+        test = Banner.objects.all()
+        context['img'] = Banner.objects.all()
+
+        print(context)
+
+        return context
 
 
 def dashboard(request):
@@ -125,6 +140,9 @@ class RegisterDoctorView(View):
                     UserDetails.objects.create(first_name=first_name, last_name=last_name,
                                                profile_photo=profile_picture, user_details=user, user_role='doctor')
                     Doctor.objects.create(department=department, qualification=qualification, user_details=user)
+                    patients = LoginCredentials.objects.filter(userdetails__user_role='patient')
+                    for patient in patients:
+                        Thread.objects.create(first_person=user, second_person=patient)
                     return redirect('dashboard')
 
                 except UserDetails.DoesNotExist:
@@ -312,3 +330,14 @@ class EditDoctorProfileView(View):
                     messages.success(request, "error")
             except:
                 return render(request, 'editdoctorprofile.html')
+
+
+class BannerView(View):
+    def get(self, request):
+        return render(request, 'add_banner.html')
+
+    def post(self, request):
+        banner = request.FILES.get('banner')
+        caption = request.POST.get('caption')
+        Banner.objects.create(banner=banner, caption=caption, user_details=request.user)
+        return redirect('dashboard')

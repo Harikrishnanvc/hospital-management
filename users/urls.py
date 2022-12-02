@@ -4,11 +4,12 @@ from .views import (
 
     DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, OtpValidation, PasswordReset, send_sms,
 
-    DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, EditDoctorProfileView
+    DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, EditDoctorProfileView, BannerView, HomePageView
 )
 
 urlpatterns = [
-    path('', dashboard, name='dashboard'),
+    path('', HomePageView.as_view(), name='home-page'),
+    path('dashboard/', dashboard, name='dashboard'),
     path('sign-in', sign_in, name='sign-in'),
     path('login', LoginView.as_view(), name='login'),
     path('sign-out', sign_out, name='sign-out'),
@@ -25,5 +26,7 @@ urlpatterns = [
     path('send-sms/', send_sms, name='send-sms'),
     path('edit-doctor-profile_view/', EditDoctorProfileView.as_view(), name='editdoctorprofileview'),
     path('doctor-profile-edit/', EditDoctorProfileView.as_view(), name='doctor-profile-edit'),
+    path('view-banner/', BannerView.as_view(), name='banner-view'),
+    path('add-banner/', BannerView.as_view(), name='add-banner'),
 
 ]

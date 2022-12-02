@@ -118,7 +118,7 @@ class RegisterPatientView(View):
                     doctors = LoginCredentials.objects.filter(userdetails__user_role='doctor')
                     for doctor in doctors:
                         Thread.objects.create(first_person=user, second_person=doctor)
-                    # send_email_after_registration(user.email, token)
+                    send_email_after_registration(user.email, token)
                     messages.success(request,
                                      "your account created successfully to verify your account check your email..")
 

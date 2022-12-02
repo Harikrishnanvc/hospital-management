@@ -98,3 +98,13 @@ class BookAppointment(models.Model):
 
     def __str__(self):
         return self.user_details.username
+
+
+class Banner(models.Model):
+    user_details = models.ForeignKey(LoginCredentials, on_delete=models.CASCADE, null=True)
+    banner = models.ImageField(upload_to='banner', null=True)
+    caption = models.CharField(max_length=250, null=True)
+
+    def __str__(self):
+        return self.caption
+    

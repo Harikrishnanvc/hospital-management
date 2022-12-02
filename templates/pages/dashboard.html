@@ -102,6 +102,7 @@
                     <span class="nav-link-text ms-1">Profile</span>
                 </a>
             </li>
+            {% if not request.user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link text-white " href="{% url 'sign-in' %}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -110,24 +111,19 @@
                     <span class="nav-link-text ms-1">Sign In</span>
                 </a>
             </li>
+
             <li class="nav-item">
-                <a class="nav-link text-white " href="{% url 'sign-up' %}">
+                <a class="nav-link text-white " href="{% url 'add-patient' %}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">assignment</i>
                     </div>
-                    <span class="nav-link-text ms-1">Sign Up</span>
+                    <span class="nav-link-text ms-1"></span>
                 </a>
             </li>
         </ul>
+        {% endif%}
     </div>
-    {% if user_role.user_role == 'admin' %}
-    <div class="sidenav-footer position-absolute w-100 bottom-20 ">
-        <div class="mx-3">
-            <a class="btn bg-gradient-primary mt-4 w-100"
-               href="{% url 'add-doctor' %}" type="button">Add Doctors</a>
-        </div>
-    </div>
-    {% endif %}
+
 </aside>
 <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
@@ -353,13 +349,19 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <h6 class="mb-0 ">Website Views</h6>
-                        <p class="text-sm ">Last Campaign Performance</p>
-                        <hr class="dark horizontal">
+
+                        {% if user_role.user_role == 'admin' %}
+                         <h6 class="mb-0 ">Add New Banners</h6>
+                        <hr style="margin-top:55px;">
                         <div class="d-flex ">
-                            <i class="material-icons text-sm my-auto me-1">schedule</i>
-                            <p class="mb-0 text-sm"> campaign sent 2 days ago </p>
+                            <div class="sidenav-footer position-absolute w-100 bottom-3 ">
+                                <div class="mx-8">
+                                    <a class="btn bg-gradient-info mt-4 w-100"
+                                       href="{% url 'apply-leave' %}" type="button">Add Banner</a>
+                                </div>
+                            </div>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -373,14 +375,19 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <h6 class="mb-0 "> Daily Sales </h6>
-                        <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) increase in today sales.
-                        </p>
-                        <hr class="dark horizontal">
+
+                        {% if user_role.user_role == 'admin' %}
+                         <h6 class="mb-0 ">Add New Banners</h6>
+                        <hr style="margin-top:55px;">
                         <div class="d-flex ">
-                            <i class="material-icons text-sm my-auto me-1">schedule</i>
-                            <p class="mb-0 text-sm"> updated 4 min ago </p>
+                            <div class="sidenav-footer position-absolute w-100 bottom-3 ">
+                                <div class="mx-8">
+                                    <a class="btn bg-gradient-dark mt-4 w-100"
+                                       href="{% url 'banner-view' %}" type="button">Add Banner</a>
+                                </div>
+                            </div>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -396,15 +403,27 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body"> {% if user_role.user_role == 'doctor' %}
                         <h6 class="mb-0 ">Leave Status</h6>
                         <hr style="margin-top:55px;">
-                        {% if user_role.user_role == 'doctor' %}
+
                         <div class="d-flex ">
                             <div class="sidenav-footer position-absolute w-100 bottom-3 ">
                                 <div class="mx-8">
                                     <a class="btn bg-gradient-primary mt-4 w-100"
                                        href="{% url 'apply-leave' %}" type="button">Apply Leave</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                         {% if user_role.user_role == 'admin' %}
+                        <h6 class="mb-0 ">Register New Doctors</h6>
+                        <hr style="margin-top:55px;">
+                        <div class="d-flex ">
+                            <div class="sidenav-footer position-absolute w-100 bottom-3 ">
+                                <div class="mx-8">
+                                    <a class="btn bg-gradient-info mt-4 w-100"
+                                       href="{% url 'add-doctor' %}" type="button">Add Doctor</a>
                                 </div>
                             </div>
                         </div>
@@ -474,7 +493,7 @@
                                 <tr>
                                     <td>
                                         {% for patient in patient_details %}
-                                        <div class="d-flex px-2 py-1">
+                                        <div class="d-flex px-2 py-1 mt-3">
                                             <div>
                                                 <img src="{{ patient.profile_photo.url }}"
                                                      class="avatar avatar-sm me-3" alt="xd">
@@ -489,7 +508,7 @@
 
                                     <td>
                                         {% for i in patient %}
-                                        <div class="d-flex px- py-2">
+                                        <div class="d-flex px- py-2 mt-3">
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h6 class="mb-2 text-sm">{{ i.age }}</h6>
                                             </div>
@@ -498,7 +517,7 @@
                                     </td>
                                     <td>
                                         {% for j in patient_login_details %}
-                                        <div class="d-flex px- py-2 " style="margin-left:150px;">
+                                        <div class="d-flex px- py-2 mt-3" style="margin-left:150px;">
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h6 class="mb-2 text-sm">{{ j.email }}</h6>
                                             </div>
@@ -508,23 +527,23 @@
 
                                     <td class="align-middle">
                                         {% for j in patient_login_details %}
-                                        <div class="progress-wrapper w-65">
-                                            <a class="btn bg-gradient-dark btn-sm"
+                                        <div class="progress-wrapper w-75 mx-auto">
+                                            <a class="btn bg-gradient-dark mt-2 w-100"
                                                href="{% url 'patient-profile' j.id %}">
 
-                                                <span class="ms-2">View Profile</span>
+                                                <span class="ms-1">View Profile</span>
                                             </a>
 
                                         </div>
                                         {% endfor %}
                                     </td>
                                     <td class="align-middle">
-                                        {% for dr in doctor_login_details %}
-                                        <div class="progress-wrapper w-100 mx-auto">
-                                            <a class="btn bg-gradient-info btn-sm"
+                                        {% for dr in patient_login_details %}
+                                        <div class="progress-wrapper w-60 mx-auto">
+                                            <a class="btn bg-gradient-info mt-2 w-100"
                                                href="{% url 'message-page' %}">
                                                 <i class="material-icons text-lg position-relative">forum</i>
-                                                <span class="ms-2">Chat</span></a>
+                                                <span class="ms1">Chat</span></a>
                                             </a>
                                         </div>
                                         {% endfor %}
