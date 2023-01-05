@@ -1,10 +1,9 @@
 from django.urls import path
+
 from .views import (
-    dashboard, sign_in, LoginView, sign_out, RegisterDoctorView, register_doctor_view,
-
-    DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, OtpValidation, PasswordReset, send_sms,
-
-    DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, EditDoctorProfileView, BannerView, HomePageView
+    dashboard, sign_in, LoginView, sign_out, RegisterDoctorView, register_doctor_view, OtpValidation, PasswordReset,
+    send_sms, DoctorProfileView, sign_up, ApplyLeaveView, ForgotPasswordView, EditDoctorProfileView, BannerView,
+    HomePageView
 )
 
 urlpatterns = [

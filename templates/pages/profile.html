@@ -98,22 +98,7 @@
                     <span class="nav-link-text ms-1">Profile</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link text-white " href="../pages/sign-in.html">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">login</i>
-                    </div>
-                    <span class="nav-link-text ms-1">Sign In</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white " href="../pages/sign-up.html">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">assignment</i>
-                    </div>
-                    <span class="nav-link-text ms-1">Sign Up</span>
-                </a>
-            </li>
+
         </ul>
     </div>
     <!--    <div class="sidenav-footer position-absolute w-100 bottom-0 ">-->
@@ -297,7 +282,7 @@
                             <li class="nav-item">
                                 <a class=" " data-bs-toggle="tab"
                                    role="tab" aria-selected="true">
-                                    <a class="btn bg-gradient-info" href="{% url 'editprofileview' %}">
+                                    <a class="btn bg-gradient-info" href="{% url 'message-page' %}">
                                         <i class="material-icons text-lg position-relative">chat</i>
                                         <span class="ms-1">Chat</span></a>
                                 </a>
@@ -305,7 +290,7 @@
                             <li class="nav-item">
                                 <a class=" " data-bs-toggle="tab"
                                    role="tab" aria-selected="true">
-                                    <a class="btn bg-gradient-primary" href="{% url 'editprofileview' %}">
+                                    <a class="btn bg-gradient-primary" href="{% url 'editdoctorprofileview' %}">
                                         <i class="material-icons text-lg position-relative">edit</i>
                                         <span class="ms-1">Update</span></a>
                                 </a>
@@ -469,31 +454,27 @@
                     </p>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+            <div class="col-lg-3 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
                 <div class="nav-wrapper position-relative end-0">
-                    <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                    <ul class="nav nav-pills nav-fill p-3" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link mb-0 px-0 py-1 active " data-bs-toggle="tab"
+                            <a class=" " data-bs-toggle="tab"
                                role="tab" aria-selected="true">
-                                <a href="{% url 'editdoctorprofileview' %}">Edit profile</a>
-                                <!-- <i class="material-icons text-lg position-relative">home</i> -->
-                                <span class="ms-1"></span>
+                                <a class="btn bg-gradient-info" href="{% url 'message-page' %}">
+                                    <i class="material-icons text-lg position-relative">chat</i>
+                                    <span class="ms-1">Chat</span></a>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab"
-                               aria-selected="false">
-                                <i class="material-icons text-lg position-relative">email</i>
-                                <span class="ms-1">Messages</span>
+                            <a class=" " data-bs-toggle="tab"
+                               role="tab" aria-selected="true">
+                                <a class="btn bg-gradient-primary" href="{% url 'editdoctorprofileview' %}">
+                                    <i class="material-icons text-lg position-relative">edit</i>
+                                    <span class="ms-1">Update</span></a>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab"
-                               aria-selected="false">
-                                <i class="material-icons text-lg position-relative">settings</i>
-                                <span class="ms-1">Settings</span>
-                            </a>
-                        </li>
+
+
                     </ul>
                 </div>
             </div>
@@ -527,6 +508,7 @@
                                         class="text-dark">Username:</strong>
                                     &nbsp; {{ login_detail.username }}
                                 </li>
+
                                 <li class="list-group-item border-0 ps-0 pb-0">
                                     <strong class="text-dark text-sm">Social:</strong> &nbsp;
                                     <a class="btn btn-facebook btn-simple mb-0 ps-1 pe-2 py-0" href="javascript:;">
@@ -669,6 +651,7 @@
       }
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
+
 
 
 

@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib import messages
@@ -7,12 +8,11 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic import View
 
-from users.models import BookAppointment
-from users.models import LoginCredentials, UserDetails, Patient, ScannedReport
-from .forms import PatientForm
-from paymentapp.views import order_payment
-from datetime import datetime
 from chat_app.models import Thread
+from users.models import BookAppointment
+from users.models import LoginCredentials, UserDetails, Patient, ScannedReport, PrescriptionFile
+from .forms import PatientForm
+
 
 # Create your views here.
 
@@ -43,7 +43,8 @@ class EditProfileView(View):
         context = {
             'login_details': login_details,
             'user_details': user_details,
-            'patient_details': patient_details
+            'patient_details': patient_details,
+
         }
         return render(request, 'editprofile.html', context)
 
@@ -55,7 +56,7 @@ class EditProfileView(View):
 
                 user_details = UserDetails.objects.get(user_details__username=request.user)
 
-                patient_details = Patient.objects.get(user_details=request.user)
+                patient_details = Patient.objects.get(user_details__username=request.user)
 
                 login_details.username = request.POST['username']
                 login_details.email = request.POST['email']
@@ -73,17 +74,16 @@ class EditProfileView(View):
                     patient_details.save()
 
                     messages.success(request, "updated successfully")
-                    return redirect('doctor-profile')
-                elif profile_photo is not None:
+                    return redirect('profile-upload')
+                else:
                     user_details.profile_photo = profile_photo
                     login_details.save()
                     user_details.save()
                     patient_details.save()
 
                     messages.success(request, "updated successfully")
-                    return redirect('doctor-profile')
-                else:
-                    messages.success(request, "error")
+                    return redirect('profile-upload')
+
             except:
                 return render(request, 'editprofile.html')
 
@@ -234,18 +234,20 @@ class PatientUploadView(View):
         user_details = UserDetails.objects.filter(user_details__username=login_details)
         patient_details = Patient.objects.filter(user_details__username=login_details)
         reports = ScannedReport.objects.filter(user_details__username=login_details)
+        prescription = PrescriptionFile.objects.filter(patient__user_details=request.user)
         context = {
             'login_details': login_details,
             'user_details': user_details,
             'patient_details': patient_details,
-            'reports': reports
+            'reports': reports,
+            'prescription': prescription
         }
 
         return render(request, 'patient_profile_upload.html', context)
 
     def post(self, request):
-        # try:
-        patient = LoginCredentials.objects.get(username=request.user)
         scanned_report = request.FILES.get('scanned_report')
-        ScannedReport.objects.create(user_details=patient, scanned_report=scanned_report)
+        prescription_note = request.POST.get('prescription_note')
+        ScannedReport.objects.create(user_details=request.user, scanned_report=scanned_report,
+                                     prescription_note=prescription_note)
         return redirect('profile-upload')

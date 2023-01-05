@@ -1,15 +1,18 @@
 import os
 
+from django.contrib.postgres.search import SearchVector, SearchQuery
+from django.db.models import Q
 from django.http import FileResponse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
 
-from users.models import BookAppointment, PrescriptionFile
-from users.models import LoginCredentials, UserDetails, Patient, Leave, Doctor
-from .helpers import save_pdf
-from django.contrib.postgres.search import SearchVector, SearchQuery, TrigramWordSimilarity
-from django.db.models import Q
+from users.models import (
+    LoginCredentials, UserDetails, Patient,
+    Leave, BookAppointment, PrescriptionFile, ScannedReport
+)
+from doctor_app.helpers import save_pdf
+
 
 # Create your views here.
 class PatientProfileView(View):
@@ -20,13 +23,15 @@ class PatientProfileView(View):
             user_details = UserDetails.objects.filter(user_details__username=login_details)
             patient_details = Patient.objects.filter(user_details__username=login_details)
 
-            reports = PrescriptionFile.objects.filter(user_details__username=login_details)
+            reports = PrescriptionFile.objects.filter(patient__user_details=login_details)
+            scanned_report = ScannedReport.objects.filter(user_details=login_details)
 
             context = {
                 'login_details': login_details,
                 'user_details': user_details,
                 'patient_details': patient_details,
-                'reports': reports
+                'reports': reports,
+                'scanned_report': scanned_report
             }
             return render(request, 'patient_profile.html', context)
 
@@ -35,12 +40,12 @@ class PatientProfileView(View):
 
     def post(self, request, id):
         try:
-            patient = LoginCredentials.objects.get(id=id)
-            patient_instance = Patient.objects.get(user_details=patient)
+            patient = Patient.objects.get(user_details__id=id)
+            doctor = LoginCredentials.objects.get(username=request.user)
             prescription = request.FILES.get('prescription')
             prescription_note = request.POST['prescription_note']
-            PrescriptionFile.objects.create(user_details=patient, prescription=prescription,
-                                            prescription_note=prescription_note, patient=patient_instance)
+            PrescriptionFile.objects.create(user_details=doctor, prescription=prescription,
+                                            prescription_note=prescription_note, patient=patient)
             return redirect('patient-profile', id=id)
         except LoginCredentials.DoesNotExist:
             return redirect('dashboard')
@@ -107,19 +112,19 @@ class SearchView(View):
             if user.user_role == 'admin':
                 qs = UserDetails.objects.annotate(
                     search=SearchVector("first_name", "last_name") +
-                    SearchVector("user_details__doctor__department", "user_role")).filter(
+                           SearchVector("user_details__doctor__department", "user_role")).filter(
                     search=SearchQuery(query)).exclude(user_role='admin')
 
             elif user.user_role == 'doctor':
                 qs = UserDetails.objects.annotate(
                     search=SearchVector("first_name", "last_name") +
-                    SearchVector("user_role")).filter(
+                           SearchVector("user_role")).filter(
                     Q(search=SearchQuery(query)) & ~Q(user_role='doctor') & ~Q(user_role='admin'))
 
             elif user.user_role == 'patient':
                 qs = UserDetails.objects.annotate(
                     search=SearchVector("first_name", "last_name") +
-                    SearchVector("user_details__doctor__department", "user_role")).filter(
+                           SearchVector("user_details__doctor__department", "user_role")).filter(
                     Q(search=SearchQuery(query)) & ~Q(user_role='patient') & ~Q(user_role='admin'))
             else:
                 return HttpResponse('No match found')
@@ -128,5 +133,3 @@ class SearchView(View):
 
         except UserDetails.DoesNotExist:
             return HttpResponse('Please Login')
-
-

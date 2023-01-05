@@ -1,5 +1,5 @@
 import base64
-from datetime import datetime
+from datetime import datetime, date
 
 import pyotp
 import requests
@@ -13,15 +13,15 @@ from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.views.generic.base import TemplateView
 
+from chat_app.models import Thread
 from .forms import DoctorForm, PasswordForm
 from .models import LoginCredentials, UserDetails, Doctor, Leave, Patient, Banner
-from chat_app.models import Thread
-import random
+
 
 class HomePageView(TemplateView):
     template_name = 'homepage.html'
 
-    def get_context_data(self,*args, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         context = super(HomePageView, self).get_context_data(*args, **kwargs)
         banner = Banner.objects.all()
         test = Banner.objects.all()
@@ -40,7 +40,10 @@ def dashboard(request):
     patient = Patient.objects.all()
     patient_login_details = LoginCredentials.objects.filter(userdetails__user_role='patient')
     leave_details = Leave.objects.filter(leave_approval=None)
-
+    doctor_list = UserDetails.objects.filter(user_role='doctor')
+    patient_list = UserDetails.objects.filter(user_role='doctor')
+    current_date = date.today()
+    on_leave_today = Leave.objects.filter(from_date__lte=current_date, to_date__gte=current_date)
     try:
         user_role = UserDetails.objects.get(user_details__username=request.user)
     except UserDetails.DoesNotExist:
@@ -52,13 +55,17 @@ def dashboard(request):
                'patient_details': patient_details,
                'patient': patient,
                'patient_login_details': patient_login_details,
-               'leave_details': leave_details
+               'leave_details': leave_details,
+               'doctor_list': doctor_list,
+               'patient_list': patient_list,
+               'on_leave_today': on_leave_today
                }
 
     return render(request, 'pages/dashboard.html', context)
 
 
 def sign_in(request):
+    # LoginCredentials.objects.create_user(username='adminuser', password='123', email='adminuser@gmail.com')
     return render(request, 'pages/sign-in.html')
 
 
@@ -145,7 +152,7 @@ class RegisterDoctorView(View):
                         Thread.objects.create(first_person=user, second_person=patient)
                     return redirect('dashboard')
 
-                except UserDetails.DoesNotExist:
+                except LoginCredentials.DoesNotExist:
                     return render(request, 'add_doctor.html')
 
             return render(request, 'add_doctor.html', {'form': details})
@@ -290,7 +297,7 @@ class EditDoctorProfileView(View):
             'user_details': user_details,
             'doctor_details': doctor_details
         }
-        return render(request, 'editdoctorprofile.html', context)
+        return render(request, 'editprofile.html', context)
 
     def post(self, request):
         if request.method == 'POST':
@@ -301,13 +308,13 @@ class EditDoctorProfileView(View):
 
                 doctor_details = Doctor.objects.get(user_details=request.user)
 
-                login_details.username = request.POST['username']
-                login_details.email = request.POST['email']
-                login_details.phone_number = request.POST['phone_number']
-                user_details.first_name = request.POST['first_name']
-                user_details.last_name = request.POST['last_name']
+                login_details.username = request.POST.get('username')
+                login_details.email = request.POST.get('email')
+                login_details.phone_number = request.POST.get('phone_number')
+                user_details.first_name = request.POST.get('first_name')
+                user_details.last_name = request.POST.get('last_name')
                 profile_photo = request.FILES.get('profile_photo')
-                doctor_details.qualification = request.POST['qualification']
+
 
                 if profile_photo is None:
 
@@ -318,18 +325,17 @@ class EditDoctorProfileView(View):
 
                     messages.success(request, "updated successfully")
                     return redirect('doctor-profile')
-                elif profile_photo is not None:
+                else:
                     user_details.profile_photo = profile_photo
                     login_details.save()
                     user_details.save()
                     doctor_details.save()
-
                     messages.success(request, "updated successfully")
                     return redirect('doctor-profile')
-                else:
-                    messages.success(request, "error")
+
             except:
-                return render(request, 'editdoctorprofile.html')
+                print('ddddddddddddddddddddddddd')
+                return redirect('editdoctorprofileview')
 
 
 class BannerView(View):

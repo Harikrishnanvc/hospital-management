@@ -29,7 +29,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'doctor_app',
     'paymentapp',
     'chat_app',
-    'easy_pdf',
     'django_celery_results',
     'django_celery_beat',
     'channels'
@@ -102,7 +101,7 @@ DATABASES = {
         'PORT': env('POSTGRES_PORT'),
     }
 }
-
+print(DATABASES)
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
