@@ -10,3 +10,4 @@ RUN apk add gcc python3-dev jpeg-dev zlib-dev gpgme-dev libc-dev musl-dev g++ fr
 RUN pip install -r requirements.txt
 
 COPY ./hospital_management /hospital_management
+ 
