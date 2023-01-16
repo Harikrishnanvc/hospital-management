@@ -23,12 +23,7 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomePageView, self).get_context_data(*args, **kwargs)
-        banner = Banner.objects.all()
-        test = Banner.objects.all()
         context['img'] = Banner.objects.all()
-
-        print(context)
-
         return context
 
 
@@ -81,41 +76,40 @@ def sign_out(request):
 class LoginView(View):
 
     def post(self, request):
-        if request.method == 'POST':
-            credentials = request.POST['credentials']
-            password = request.POST['password']
-            user = authenticate(username=credentials, password=password)
-            if user is not None:
-                try:
-                    user_role = UserDetails.objects.get(user_details__username=user).user_role
-                    if user_role == 'doctor':
+        credentials = request.POST['credentials']
+        password = request.POST['password']
+        user = authenticate(username=credentials, password=password)
+        if user is not None:
+
+            try:
+                user_role = UserDetails.objects.get(user_details__username=user).user_role
+                if user_role == 'doctor':
+                    login(request, user)
+                    return redirect('dashboard')
+
+                if user_role == 'admin':
+                    login(request, user)
+                    return redirect('dashboard')
+
+                if user_role == 'patient':
+                    try:
+                        # verified_user = Patient.objects.get(user_details__username=user).verify
+                        # if verified_user is True:
                         login(request, user)
                         return redirect('dashboard')
+                    # else:
+                    #     messages.success(request, f'E-mail is not verified')
+                    #     return redirect('sign-in')
 
-                    if user_role == 'admin':
-                        login(request, user)
-                        return redirect('dashboard')
+                    except Patient.DoesNotExist:
+                        messages.success(request, f'{user} does not exist')
+                        return render(request, 'pages/sign-in.html')
 
-                    if user_role == 'patient':
-                        try:
-
-                            # verified_user = Patient.objects.get(user_details__username=user).verify
-                            # if verified_user is True:
-                            login(request, user)
-                            return redirect('dashboard')
-                        # else:
-                        #     messages.success(request, f'E-mail is not verified')
-                        #     return redirect('sign-in')
-
-                        except Patient.DoesNotExist:
-                            messages.success(request, f'{user} does not exist')
-                            return redirect('sign-in')
-
-                except UserDetails.DoesNotExist:
-                    return redirect('sign-in')
-            else:
-                messages.success(request, 'E-mail or Password is incorrect')
-                return redirect('sign-in')
+            except UserDetails.DoesNotExist:
+                return render(request, 'pages/sign-in.html')
+        else:
+            messages.success(request, 'E-mail or Password is incorrect')
+            return render(request, 'pages/sign-in.html')
 
 
 def register_doctor_view(request):
@@ -259,7 +253,6 @@ class PasswordReset(View):
 
 
 def send_sms(message, receiver):
-    print('here')
     service_plan_id = "459e9394ded74c55bd829ec66eac14a0"
     api_token = "fb11b617441e43e084a7106c1abe188e"
     sinch_number = "+447520650906"
@@ -271,7 +264,7 @@ def send_sms(message, receiver):
         "to": [
             receiver
         ],
-        "body": "Hello how are you"
+        "body": message
     }
 
     headers = {
@@ -297,7 +290,7 @@ class EditDoctorProfileView(View):
             'user_details': user_details,
             'doctor_details': doctor_details
         }
-        return render(request, 'editprofile.html', context)
+        return render(request, 'edit_profile.html', context)
 
     def post(self, request):
         if request.method == 'POST':
@@ -315,14 +308,11 @@ class EditDoctorProfileView(View):
                 user_details.last_name = request.POST.get('last_name')
                 profile_photo = request.FILES.get('profile_photo')
 
-
                 if profile_photo is None:
-
                     user_details.profile_photo = user_details.profile_photo
                     login_details.save()
                     user_details.save()
                     doctor_details.save()
-
                     messages.success(request, "updated successfully")
                     return redirect('doctor-profile')
                 else:
@@ -332,10 +322,8 @@ class EditDoctorProfileView(View):
                     doctor_details.save()
                     messages.success(request, "updated successfully")
                     return redirect('doctor-profile')
-
-            except:
-                print('ddddddddddddddddddddddddd')
-                return redirect('editdoctorprofileview')
+            except LoginCredentials.DoesNotExist:
+                return redirect('edit-doctor-profile-view')
 
 
 class BannerView(View):

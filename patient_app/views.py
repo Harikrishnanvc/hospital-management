@@ -46,7 +46,7 @@ class EditProfileView(View):
             'patient_details': patient_details,
 
         }
-        return render(request, 'editprofile.html', context)
+        return render(request, 'edit_profile.html', context)
 
     def post(self, request):
 
@@ -85,7 +85,7 @@ class EditProfileView(View):
                     return redirect('profile-upload')
 
             except:
-                return render(request, 'editprofile.html')
+                return render(request, 'edit_profile.html')
 
 
 def register_patient_view(request):

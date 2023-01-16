@@ -7,11 +7,11 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
 
+from doctor_app.helpers import save_pdf
 from users.models import (
     LoginCredentials, UserDetails, Patient,
     Leave, BookAppointment, PrescriptionFile, ScannedReport
 )
-from doctor_app.helpers import save_pdf
 
 
 # Create your views here.
@@ -52,7 +52,8 @@ class PatientProfileView(View):
 
 
 class BookingList(View):
-    def get(self, request):
+    @staticmethod
+    def get(request):
         doctor_details = UserDetails.objects.filter(user_details__username=request.user)
         patient_booking_list = BookAppointment.objects.filter(doctor_details=request.user)
         booking_details = BookAppointment.objects.filter(user_details__username=request.user)
@@ -112,19 +113,19 @@ class SearchView(View):
             if user.user_role == 'admin':
                 qs = UserDetails.objects.annotate(
                     search=SearchVector("first_name", "last_name") +
-                           SearchVector("user_details__doctor__department", "user_role")).filter(
+                    SearchVector("user_details__doctor__department", "user_role")).filter(
                     search=SearchQuery(query)).exclude(user_role='admin')
 
             elif user.user_role == 'doctor':
                 qs = UserDetails.objects.annotate(
                     search=SearchVector("first_name", "last_name") +
-                           SearchVector("user_role")).filter(
+                    SearchVector("user_role")).filter(
                     Q(search=SearchQuery(query)) & ~Q(user_role='doctor') & ~Q(user_role='admin'))
 
             elif user.user_role == 'patient':
                 qs = UserDetails.objects.annotate(
                     search=SearchVector("first_name", "last_name") +
-                           SearchVector("user_details__doctor__department", "user_role")).filter(
+                    SearchVector("user_details__doctor__department", "user_role")).filter(
                     Q(search=SearchQuery(query)) & ~Q(user_role='patient') & ~Q(user_role='admin'))
             else:
                 return HttpResponse('No match found')
