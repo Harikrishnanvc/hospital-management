@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'chat_app',
     'django_celery_results',
     'django_celery_beat',
-    'channels'
+    'channels',
+    'haystack'
 ]
 
 MIDDLEWARE = [
@@ -187,4 +188,13 @@ CHANNEL_LAYERS = {
         #     'hosts': [('127.0.0.1', 6379)],
         # }
     }
+}
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'H_ENGINE' :'haystack.backends.elasticsearch5_backend.Elasticsearch5SearchEngine',
+        # 'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
+    },
 }

@@ -12,7 +12,7 @@ from users.models import (
     LoginCredentials, UserDetails, Patient,
     Leave, BookAppointment, PrescriptionFile, ScannedReport
 )
-
+from haystack.query import SearchQuerySet
 
 # Create your views here.
 class PatientProfileView(View):
@@ -134,3 +134,14 @@ class SearchView(View):
 
         except UserDetails.DoesNotExist:
             return HttpResponse('Please Login')
+
+
+def search_titles(request):
+    if request.method == 'POST':
+        content = request.POST.get('search_text')
+    else:
+        content = ''
+
+    search = SearchQuerySet.autocomplete(content_auto=content)
+
+    return render(request, 'search/search_results.html', {'content': search})

@@ -12,6 +12,7 @@ urlpatterns = [
     path('chat/', include('chat_app.urls')),
     path("payment/<pk>", views.order_payment, name="payment"),
     path("callback/<pk>", views.callback, name="callback"),
+    path('search/', include('haystack.urls')),
 
 ]
 
