@@ -13,3 +13,5 @@ redis==4.4.0
 xhtml2pdf==0.2.5
 reportlab==3.6.6
 django-haystack==3.2.1
+nginx
+gunicorn
