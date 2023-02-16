@@ -1,77 +1,79 @@
 version: '3'
 
 services:
-    hospital_management:
-        build:
-          context: .
-        container_name: hospital_management
-        ports:
-          - "8000:8000"
-        volumes:
-          - .:/hospital_management
-        command: >
-          sh -c "python manage.py migrate &&
-                python manage.py runserver 0.0.0.0:8000"
-        env_file:
-          - ./hospital_management/.env
+  hospital_management:
+    build:
+      context: .
+    container_name: hospital_management
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/hospital_management
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    env_file:
+      - ./hospital_management/.env
 
-        depends_on:
-            - db
-        networks:
-          - "default"
+    depends_on:
+      - db
+    networks:
+      - "default"
 
-    db:
-        image: postgres:12-alpine
-        restart: always
-        ports:
-          - "5432:5432"
-        volumes:
-          - "./hospitalmanagement:/var/lib/postgresql/data"
-        env_file:
-          - ./hospital_management/.env
-        environment:
-          - DEBUG=1
-          - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
-          - CELERY_BROKER=redis://redis:6379/0
-          - CELERY_BACKEND=redis://redis:6379/0
-        networks:
-          - "default"
+  db:
+    image: postgres:12-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./hospitalmanagement:/var/lib/postgresql/data"
+    env_file:
+      - ./hospital_management/.env
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    networks:
+      - "default"
 
-    redis:
-      image: redis:alpine
+  redis:
+    image: redis:alpine
 
-    celery:
-      build:
-         context: .
-      command:  celery -A hospital_management worker -l INFO
-      volumes:
-        - .:/hospital_management
-      environment:
-        - DEBUG=1
-        - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
-        - CELERY_BROKER=redis://redis:6379/0
-        - CELERY_BACKEND=redis://redis:6379/0
-      depends_on:
-        - redis
-        - hospital_management
+  celery:
+    build:
+      context: .
+    command: celery -A hospital_management worker -l INFO
+    volumes:
+      - .:/hospital_management
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+      - hospital_management
 
-    celery-beat:
-      build:
-        context: .
-      command: celery -A hospital_management beat -l INFO
-      volumes:
-        - .:/hospital_management
-      environment:
-        - DEBUG=1
-        - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
-        - CELERY_BROKER=redis://redis:6379/0
-        - CELERY_BACKEND=redis://redis:6379/0
-      depends_on:
-        - redis
+  celery-beat:
+    build:
+      context: .
+    command: celery -A hospital_management beat -l INFO
+    volumes:
+      - .:/hospital_management
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
 
 networks:
-    default:
+  default:
 
 volumes:
-    hospitalmanagement:
+  hospitalmanagement:
 
