@@ -1,4 +1,5 @@
 import json
+
 from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
@@ -10,7 +11,6 @@ User = get_user_model()
 
 class ChatConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
-        print('connected', event)
         user = self.scope['user']
         chat_room = f'user_chatroom_{user.id}'
         self.chat_room = chat_room
@@ -23,7 +23,6 @@ class ChatConsumer(AsyncConsumer):
         })
 
     async def websocket_receive(self, event):
-        print('receive', event)
         received_data = json.loads(event['text'])
         msg = received_data.get('message')
         sent_by_id = received_data.get('sent_by')
@@ -31,7 +30,6 @@ class ChatConsumer(AsyncConsumer):
         thread_id = received_data.get('thread_id')
 
         if not msg:
-            print('Error:: empty message')
             return False
 
         sent_by_user = await self.get_user_object(sent_by_id)

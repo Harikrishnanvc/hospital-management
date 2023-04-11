@@ -6,13 +6,14 @@ from django.http import FileResponse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
+from haystack.query import SearchQuerySet
 
 from doctor_app.helpers import save_pdf
 from users.models import (
     LoginCredentials, UserDetails, Patient,
     Leave, BookAppointment, PrescriptionFile, ScannedReport
 )
-from haystack.query import SearchQuerySet
+
 
 # Create your views here.
 class PatientProfileView(View):
@@ -104,7 +105,6 @@ class LeaveStatus(View):
 
 
 class SearchView(View):
-
     def post(self, request):
         query = request.POST.get('search_query')
         try:
@@ -113,19 +113,19 @@ class SearchView(View):
             if user.user_role == 'admin':
                 qs = UserDetails.objects.annotate(
                     search=SearchVector("first_name", "last_name") +
-                    SearchVector("user_details__doctor__department", "user_role")).filter(
+                           SearchVector("user_details__doctor__department", "user_role")).filter(
                     search=SearchQuery(query)).exclude(user_role='admin')
 
             elif user.user_role == 'doctor':
                 qs = UserDetails.objects.annotate(
                     search=SearchVector("first_name", "last_name") +
-                    SearchVector("user_role")).filter(
+                           SearchVector("user_role")).filter(
                     Q(search=SearchQuery(query)) & ~Q(user_role='doctor') & ~Q(user_role='admin'))
 
             elif user.user_role == 'patient':
                 qs = UserDetails.objects.annotate(
                     search=SearchVector("first_name", "last_name") +
-                    SearchVector("user_details__doctor__department", "user_role")).filter(
+                           SearchVector("user_details__doctor__department", "user_role")).filter(
                     Q(search=SearchQuery(query)) & ~Q(user_role='patient') & ~Q(user_role='admin'))
             else:
                 return HttpResponse('No match found')

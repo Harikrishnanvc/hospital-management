@@ -1,8 +1,9 @@
 from django.db import models
 from django.db.models.fields import CharField
 from django.utils.translation import gettext_lazy as _
-from .constants import PaymentStatus
+
 from users.models import LoginCredentials
+from .constants import PaymentStatus
 
 
 class Order(models.Model):

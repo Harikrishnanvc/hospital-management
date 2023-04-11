@@ -10,9 +10,6 @@ from .constants import PaymentStatus
 from .models import Order
 
 
-# Create your views here.
-
-
 def order_payment(request, pk):
     if request.method == "GET":
         try:
@@ -58,14 +55,7 @@ def callback(request, pk):
         BookAppointment.objects.filter(id=pk).update(booking_status=True)
 
         return render(request, "payment/callback.html", context={"status": order.status})
-        # if not verify_signature(request.POST):
-        #     order.status = PaymentStatus.SUCCESS
-        #     order.save()
-        #     return render(request, "payment/callback.html", context={"status": order.status})
-        # else:
-        #     order.status = PaymentStatus.FAILURE
-        #     order.save()
-        #     return render(request, "payment/callback.html", context={"status": order.status})
+
     else:
         payment_id = json.loads(request.POST.get("error[metadata]")).get("payment_id")
         provider_order_id = json.loads(request.POST.get("error[metadata]")).get(

@@ -3,6 +3,7 @@ from datetime import datetime, date
 
 import pyotp
 import requests
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
@@ -59,20 +60,6 @@ def dashboard(request):
     return render(request, 'pages/dashboard.html', context)
 
 
-def sign_in(request):
-    # LoginCredentials.objects.create_user(username='adminuser', password='123', email='adminuser@gmail.com')
-    return render(request, 'pages/sign-in.html')
-
-
-def sign_up(request):
-    return render(request, 'pages/register.html')
-
-
-def sign_out(request):
-    logout(request)
-    return redirect('sign-in')
-
-
 class LoginView(View):
 
     def post(self, request):
@@ -93,13 +80,13 @@ class LoginView(View):
 
                 if user_role == 'patient':
                     try:
-                        # verified_user = Patient.objects.get(user_details__username=user).verify
-                        # if verified_user is True:
-                        login(request, user)
-                        return redirect('dashboard')
-                    # else:
-                    #     messages.success(request, f'E-mail is not verified')
-                    #     return redirect('sign-in')
+                        verified_user = Patient.objects.get(user_details__username=user).verify
+                        if verified_user is True:
+                            login(request, user)
+                            return redirect('dashboard')
+                        else:
+                            messages.success(request, f'E-mail is not verified')
+                            return redirect('sign-in')
 
                     except Patient.DoesNotExist:
                         messages.success(request, f'{user} does not exist')
@@ -131,7 +118,6 @@ class RegisterDoctorView(View):
                 qualification = request.POST['qualification']
                 profile_picture = request.FILES.get('profile_photo')
                 random_password = LoginCredentials.objects.make_random_password()
-                print(random_password)
                 password = make_password(random_password)
 
                 LoginCredentials.objects.create(email=email, username=user_name, phone_number=phone_number,
@@ -253,8 +239,8 @@ class PasswordReset(View):
 
 
 def send_sms(message, receiver):
-    service_plan_id = "459e9394ded74c55bd829ec66eac14a0"
-    api_token = "fb11b617441e43e084a7106c1abe188e"
+    service_plan_id = settings.SERVICE_PLAN_ID
+    api_token = settings.API_TOKEN
     sinch_number = "+447520650906"
     receiver = receiver
     url = "https://us.sms.api.sinch.com/xms/v1/" + service_plan_id + "/batches"
@@ -296,11 +282,8 @@ class EditDoctorProfileView(View):
         if request.method == 'POST':
             try:
                 login_details = LoginCredentials.objects.get(username=request.user)
-
                 user_details = UserDetails.objects.get(user_details__username=request.user)
-
                 doctor_details = Doctor.objects.get(user_details=request.user)
-
                 login_details.username = request.POST.get('username')
                 login_details.email = request.POST.get('email')
                 login_details.phone_number = request.POST.get('phone_number')
@@ -324,6 +307,19 @@ class EditDoctorProfileView(View):
                     return redirect('doctor-profile')
             except LoginCredentials.DoesNotExist:
                 return redirect('edit-doctor-profile-view')
+
+
+def sign_in(request):
+    return render(request, 'pages/sign-in.html')
+
+
+def sign_up(request):
+    return render(request, 'pages/register.html')
+
+
+def sign_out(request):
+    logout(request)
+    return redirect('sign-in')
 
 
 class BannerView(View):

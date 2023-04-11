@@ -1,11 +1,12 @@
-from io import BytesIO
-from django.template.loader import get_template
-import xhtml2pdf.pisa as pisa
 import uuid
+from io import BytesIO
+
+import xhtml2pdf.pisa as pisa
 from django.conf import settings
+from django.template.loader import get_template
 
 
-def save_pdf(params:dict):
+def save_pdf(params: dict):
     template = get_template("pages/booking.html")
     html = template.render(params)
     response = BytesIO()
@@ -22,6 +23,3 @@ def save_pdf(params:dict):
         return '', False
 
     return file_name, True
-
-
-

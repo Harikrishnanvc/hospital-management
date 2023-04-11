@@ -198,3 +198,6 @@ HAYSTACK_CONNECTIONS = {
         'INDEX_NAME': 'haystack',
     },
 }
+
+SERVICE_PLAN_ID = env("SERVICE_PLAN_ID")
+API_TOKEN = env("API_TOKEN")
